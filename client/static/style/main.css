@@ -1,0 +1,9 @@
+.editr--toolbar{
+    display: flex !important;
+    flex-wrap: wrap !important;
+    height: auto !important;
+}
+.vw-separator{
+    display: none;
+    opacity: 0;
+}
