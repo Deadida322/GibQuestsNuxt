@@ -8,7 +8,7 @@
         </v-img>
         <v-card-title class="d-flex align-center justify-space-between text--secondary pb-0">
             {{item.title}} 
-           <QuestMenu :id="item.id"/>
+           <QuestMenu v-if="edit" :id="item.id"/>
         </v-card-title>
         <div v-if="item.users.length">
             <v-card-subtitle class="py-0 pb-2 text--secondary">Сейчас проходят</v-card-subtitle>
@@ -16,6 +16,10 @@
                 <v-avatar color="green"  class="mr-2 white--text" v-for="(item, key) in item.users" :key="key">{{item.username.slice(0,2).toUpperCase()}}</v-avatar>
             </v-card-text>
         </div>
+        <v-card-actions>
+            <v-spacer/>
+            <v-btn :to="`/view/${item.id}`" color="primary">Просмотреть</v-btn>
+        </v-card-actions>
     </v-card>
 </template>
 
@@ -31,6 +35,10 @@ export default {
         QuestMenu
     },
     props:{
+        edit:{
+            type: Boolean,
+            default: false
+        },
         item:{
             type: Object,
             required: true

@@ -3,7 +3,7 @@
         <Header title='Ваши квесты'/>
         <v-main class="pa-2 mt-4">
             <Search :placeholder="'Найти среди своих'" @search="search"/>
-            <Quest v-for="(item, key) in createdQuests" :key="key" :item="item"/>
+            <Quest edit v-for="(item, key) in createdQuests" :key="key" :item="item"/>
             <Add @click="$router.push(`/create/${createdQuests+1}`)" class="mt-5"/>
         </v-main>
     </div>

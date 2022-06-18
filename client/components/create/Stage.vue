@@ -7,7 +7,7 @@
                     {{idx+1}}
                 </div>
             </v-btn>
-            <div class="d-flex w-100 px-2 flex-column">
+            <div class="d-flex flex-grow-1 px-2 flex-column">
                 <v-text-field :value="stage.title" clearable label="Название этапа" solo/>
                 <v-text-field :value="stage.url" v-if="stage.type==='Видео'" clearable label="Url видео" solo/>
                 <v-btn color="primary" @click="createText" v-if="stage.type==='Текст'">Редактор текста</v-btn>
@@ -54,9 +54,6 @@ export default {
 </script>
 
 <style>
-    .w-100{
-        flex-grow: 1
-    }
     .stage-wrapper{
         position: relative;
     }
