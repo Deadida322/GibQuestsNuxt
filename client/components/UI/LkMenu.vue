@@ -10,7 +10,7 @@
                 v-bind="attrs"
                 v-on="on"
             >
-                <v-avatar color="primary">ЛК</v-avatar>
+                <v-avatar color="blue">ЛК</v-avatar>
             </v-btn>
         </template>
         <v-list>
