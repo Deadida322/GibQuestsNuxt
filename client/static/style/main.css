@@ -1,3 +1,8 @@
+html{
+    position: relative !important;
+    overflow-x: hidden !important;
+}
+
 .editr--toolbar{
     display: flex !important;
     flex-wrap: wrap !important;

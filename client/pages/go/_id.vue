@@ -22,12 +22,17 @@
                 </div>
                 <VideoStage @stageComplete="stageComplete" v-if="currentStage.url" :url="currentStage.url"/>
                 <TextStage v-if="currentStage.text" :text="currentStage.text"/>
+                <MapStage :key="currentStageNumber+1" v-if="currentStage.x" :goalLat="currentStage.x" :goalLong="currentStage.y"/>
+                <QRStage v-if="currentStage.to" @stageComplete="stageComplete" :codeWord="currentStage.to"/>
+                <TestStage v-if="currentStage.questions"  @stageComplete="stageComplete" :questions="currentStage.questions"/>
                 <v-card-actions>
+                    <v-btn :disabled="!currentStageNumber" @click="previousStage" dark color="blue">Назад</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn :disabled="!showBtn" @click="nextStage" color="primary">Далее</v-btn>
                 </v-card-actions>
             </v-card>
         </v-main>
+        <Progress :goal="getCurrent.stages.length" :current="currentStageNumber"/>
     </div>
 </template>
 
@@ -36,26 +41,39 @@
 import Header from '~/components/UI/Header'
 import VideoStage from '~/components/Go/VideoStage'
 import TextStage from '~/components/Go/TextStage'
+import MapStage from '~/components/Go/MapStage'
+import QRStage from '~/components/Go/QRStage'
+import TestStage from '~/components/Go/TestStage'
+import Progress from '~/components/Go/Progress'
 import { mapGetters } from 'vuex'
+
 export default {
     components:{
         Header,
         VideoStage,
-        TextStage
+        TextStage,
+        MapStage,
+        QRStage,
+        TestStage,
+        Progress
     },
     data(){
         return{
-            currentStageNumber: 1,
+            currentStageNumber: 0,
             showBtn: false
         }
     },
     methods: {
         stageComplete(){
+            console.log('complete')
             this.showBtn = true
         },
         nextStage(){
             this.showBtn = false
             this.currentStageNumber++
+        },
+        previousStage(){
+            this.currentStageNumber--
         }
     },
     computed:{

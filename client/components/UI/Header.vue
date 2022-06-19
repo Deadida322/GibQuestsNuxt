@@ -5,9 +5,9 @@
             dark
             height="64px"
         >
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon @click.stop="drawer = !drawer"/>
             <v-toolbar-title>{{title}}</v-toolbar-title>
-            <v-spacer></v-spacer>
+            <v-spacer/>
             <LkMenu/>
         </v-app-bar> 
         <v-navigation-drawer
@@ -19,8 +19,6 @@
             <Menu/>
         </v-navigation-drawer>
     </div>
-    
-    
 </template>
 
 <script>

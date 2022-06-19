@@ -8,7 +8,7 @@
     >
         <v-img
             rounded
-            max-height="200px"
+            max-height="250px"
             class='img'
             ref="dd"
             :src="backgroundComputed"
@@ -31,6 +31,7 @@
                     <div v-if="fileName" class="caption">{{fileName}}</div>
                 </label>
                 <input 
+                    :capture="camera ? 'capture':'none'"
                     @change="filePicker" 
                     type="file" 
                     class="file_input" 
@@ -55,7 +56,8 @@ export default {
     },
     props: {
         rules: [Array],
-        background: null
+        background: null,
+        camera: false
     },
     methods:{
         filePicker(e){
@@ -66,7 +68,7 @@ export default {
                     this.fileName = ''
                     return
                 }
-                if (file.size >= 1000000){
+                if (file.size >= 10000000){
                     this.error = 'Слишком большой размер'
                     this.fileName = ''
                     return
