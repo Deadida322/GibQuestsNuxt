@@ -28,12 +28,12 @@ var Stage_Test = /** @class */ (function () {
         __metadata("design:type", String)
     ], Stage_Test.prototype, "title", void 0);
     __decorate([
-        (0, typeorm_1.OneToOne)(function () { return Stage_1.Stage; }),
+        (0, typeorm_1.OneToOne)(function () { return Stage_1.Stage; }, function (stage) { return stage.stageTest; }),
         (0, typeorm_1.JoinColumn)(),
         __metadata("design:type", Stage_1.Stage)
     ], Stage_Test.prototype, "stage", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Question_1.Question; }, function (question) { return question.stageTest; }, { cascade: ["remove", "update"] }),
+        (0, typeorm_1.OneToMany)(function () { return Question_1.Question; }, function (question) { return question.stageTest; }, { cascade: true }),
         __metadata("design:type", Array)
     ], Stage_Test.prototype, "question", void 0);
     Stage_Test = __decorate([

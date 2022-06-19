@@ -2,16 +2,17 @@ import { Expose, Type } from "class-transformer";
 import { IsDefined, Matches, IsOptional } from "class-validator";
 import {StageActionDto, StageActionMapDto, StageActionMediaDto, StageActionQrDto, StageActionTextDto} from './StageActionDto';
 import { StageTestDto } from './StageTestDto';
+import {StageEnum} from '../../entity/Stage';
 export class StageDto {
     id: number
     
     @IsDefined()
     @Expose()
-    number: string;
+    number: number;
 
     @IsDefined()
     @Expose()
-    type: string;
+    type: StageEnum;
 
     @IsDefined()
     @Expose()

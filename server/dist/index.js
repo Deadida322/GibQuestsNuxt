@@ -37,19 +37,28 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("./data-source");
+require("reflect-metadata");
+// import { createConnection } from "typeorm";
+var bodyParser = require("body-parser");
+var express = require("express");
+var routes_1 = require("./routes");
+// import { accessLog, errorRequestHandler } from "./middleware";
+// import { config } from "./entity";
+var config = require("config");
+var port = config.get("port");
 data_source_1.AppDataSource.initialize().then(function () { return __awaiter(void 0, void 0, void 0, function () {
+    var app;
     return __generator(this, function (_a) {
-        console.log("Inserting a new user into the database...");
-        // const user = new User()
-        // user.firstName = "Timber"
-        // user.lastName = "Saw"
-        // user.age = 25
-        // await AppDataSource.manager.save(user)
-        // console.log("Saved a new user with id: " + user.id)
-        console.log("Loading users from the database...");
-        // const users = await AppDataSource.manager.find(User)
-        // console.log("Loaded users: ", users)
-        console.log("Here you can setup and run express / fastify / any other framework.");
+        app = express();
+        app.use(bodyParser.json());
+        app.use(bodyParser.urlencoded({ extended: true }));
+        // app.use(accessLog)
+        // register all application routes
+        (0, routes_1.initRoutes)(app);
+        // app.use(errorRequestHandler);
+        // run app
+        app.listen(port);
+        console.log("Express application is up and running on port ".concat(port));
         return [2 /*return*/];
     });
 }); }).catch(function (error) { return console.log(error); });

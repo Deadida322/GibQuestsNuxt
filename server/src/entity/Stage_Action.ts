@@ -36,7 +36,7 @@ export class Stage_Action {
     })
     text: string
 
-    @OneToOne(() => Stage)
+    @OneToOne(() => Stage, (stage) => stage.stageAction)
     @JoinColumn()
     stage: Stage
 

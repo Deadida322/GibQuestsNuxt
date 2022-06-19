@@ -35,9 +35,9 @@ export class Question {
     @ManyToOne(() => Stage_Test, (stageTest) => stageTest.question)
     stageTest: Stage_Test
 
-    @OneToMany(() => Answer, (answer) => answer.question, {cascade: ["remove", "update"]})
+    @OneToMany(() => Answer, (answer) => answer.question, {cascade: true})
     answer: Answer
 
-    @OneToMany(() => RightAnswer, (rightAnswer) => rightAnswer.question, {cascade: ["remove", "update"]})
+    @OneToMany(() => RightAnswer, (rightAnswer) => rightAnswer.question, {cascade: true})
     rightAnswer: RightAnswer
 }

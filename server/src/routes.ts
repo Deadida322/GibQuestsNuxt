@@ -1,5 +1,5 @@
 import { Request, Response, Express } from "express";
-import { user } from './controllers';
+import { user, quest } from './controllers';
 
 export class Route {
   public constructor(
@@ -13,11 +13,18 @@ export class Route {
  * All application routes.
  */
 const AppRoutes: Route[] = [
-    {
-        path: "/user",
-        method: "get",
-        action: user.get
-    },
+  {
+      path: "/user",
+      method: "get",
+      action: user.get
+  },
+
+  {
+    path: "/create",
+    method: "post",
+    action: quest.create
+  },
+
 
     // {
     //     path: "/author",

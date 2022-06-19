@@ -14,11 +14,11 @@ export class Stage_Test {
     })
     title: string
 
-    @OneToOne(() => Stage)
+    @OneToOne(() => Stage, (stage) => stage.stageTest)
     @JoinColumn()
     stage: Stage
 
-    @OneToMany(() => Question, (question) => question.stageTest, {cascade: ["remove", "update"]})
+    @OneToMany(() => Question, (question) => question.stageTest, {cascade: true})
     question: Question[]
 
 }

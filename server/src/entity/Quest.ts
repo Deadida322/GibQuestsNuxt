@@ -34,6 +34,6 @@ export class Quest {
     stages: Stage[]
 
     @ManyToOne(() => User, (user) => user.quests)
-    author: User[]
+    author: User
 
 }

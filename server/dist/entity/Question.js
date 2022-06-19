@@ -49,11 +49,11 @@ var Question = /** @class */ (function () {
         __metadata("design:type", Stage_Test_1.Stage_Test)
     ], Question.prototype, "stageTest", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Answer_1.Answer; }, function (answer) { return answer.question; }, { cascade: ["remove", "update"] }),
+        (0, typeorm_1.OneToMany)(function () { return Answer_1.Answer; }, function (answer) { return answer.question; }, { cascade: true }),
         __metadata("design:type", Answer_1.Answer)
     ], Question.prototype, "answer", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return RightAnswer_1.RightAnswer; }, function (rightAnswer) { return rightAnswer.question; }, { cascade: ["remove", "update"] }),
+        (0, typeorm_1.OneToMany)(function () { return RightAnswer_1.RightAnswer; }, function (rightAnswer) { return rightAnswer.question; }, { cascade: true }),
         __metadata("design:type", RightAnswer_1.RightAnswer)
     ], Question.prototype, "rightAnswer", void 0);
     Question = __decorate([

@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 var typeorm_1 = require("typeorm");
 var Quest_User_1 = require("./Quest_User");
+var Quest_1 = require("./Quest");
 var User = /** @class */ (function () {
     function User() {
     }
@@ -36,7 +37,8 @@ var User = /** @class */ (function () {
     __decorate([
         (0, typeorm_1.Column)({
             length: 50,
-            nullable: false
+            nullable: false,
+            unique: true
         }),
         __metadata("design:type", String)
     ], User.prototype, "username", void 0);
@@ -50,6 +52,10 @@ var User = /** @class */ (function () {
         (0, typeorm_1.OneToMany)(function () { return Quest_User_1.Quest_User; }, function (quest_User) { return quest_User.user; }, { cascade: ["update", "remove"] }),
         __metadata("design:type", Array)
     ], User.prototype, "quest_user", void 0);
+    __decorate([
+        (0, typeorm_1.OneToMany)(function () { return Quest_1.Quest; }, function (quest) { return quest.author; }, { cascade: ["update", "remove"] }),
+        __metadata("design:type", Array)
+    ], User.prototype, "quests", void 0);
     User = __decorate([
         (0, typeorm_1.Entity)()
     ], User);

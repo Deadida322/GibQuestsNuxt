@@ -5,7 +5,7 @@ import {Stage_Test} from './Stage_Test';
 
 
 export type StageEnum = 'Видео' | 'Текст'| 'Карта' | 'Тест' | 'QR'
-export const stageEnumArray = ['Видео', 'Текст', 'Карта', 'Тест', 'QR']
+export const StageEnumArray = ['Видео', 'Текст', 'Карта', 'Тест', 'QR']
 @Entity()
 export class Stage {
 
@@ -19,7 +19,7 @@ export class Stage {
 
     @Column({
         type: "enum",
-        enum: stageEnumArray,
+        enum: StageEnumArray,
         default: 'Текст',
         nullable: false
     })
@@ -34,9 +34,10 @@ export class Stage {
     @ManyToOne(() => Quest, (quest) => quest.stages)
     quest: Quest
 
-    // @OneToOne(() => Stage_Action, (stageAction) => stageAction.stage)
-    // stageAction: Stage_Action
 
-    // @OneToOne(() => Stage_Test, (stageTest) => stageTest.stage)
-    // stageTest: Stage_Test
+    @OneToOne(() => Stage_Action, (stageAction) => stageAction.stage)
+    stageAction: Stage_Action
+
+    @OneToOne(() => Stage_Test, (stageTest) => stageTest.stage)
+    stageTest: Stage_Test
 }

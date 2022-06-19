@@ -1,4 +1,3 @@
-import { getManager } from "typeorm";
 import { User } from "../entity/User";
 import { NotFoundError } from "../error";
 import { catchOrmErrors } from "./utils";

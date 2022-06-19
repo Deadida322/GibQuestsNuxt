@@ -9,10 +9,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Stage = exports.stageEnumArray = void 0;
+exports.Stage = exports.StageEnumArray = void 0;
 var typeorm_1 = require("typeorm");
 var Quest_1 = require("./Quest");
-exports.stageEnumArray = ['Видео', 'Текст', 'Карта', 'Тест', 'QR'];
+var Stage_Action_1 = require("./Stage_Action");
+var Stage_Test_1 = require("./Stage_Test");
+exports.StageEnumArray = ['Видео', 'Текст', 'Карта', 'Тест', 'QR'];
 var Stage = /** @class */ (function () {
     function Stage() {
     }
@@ -29,7 +31,7 @@ var Stage = /** @class */ (function () {
     __decorate([
         (0, typeorm_1.Column)({
             type: "enum",
-            enum: exports.stageEnumArray,
+            enum: exports.StageEnumArray,
             default: 'Текст',
             nullable: false
         }),
@@ -44,13 +46,16 @@ var Stage = /** @class */ (function () {
     ], Stage.prototype, "name", void 0);
     __decorate([
         (0, typeorm_1.ManyToOne)(function () { return Quest_1.Quest; }, function (quest) { return quest.stages; }),
-        __metadata("design:type", Quest_1.Quest
-        // @OneToOne(() => Stage_Action, (stageAction) => stageAction.stage)
-        // stageAction: Stage_Action
-        // @OneToOne(() => Stage_Test, (stageTest) => stageTest.stage)
-        // stageTest: Stage_Test
-        )
+        __metadata("design:type", Quest_1.Quest)
     ], Stage.prototype, "quest", void 0);
+    __decorate([
+        (0, typeorm_1.OneToOne)(function () { return Stage_Action_1.Stage_Action; }, function (stageAction) { return stageAction.stage; }),
+        __metadata("design:type", Stage_Action_1.Stage_Action)
+    ], Stage.prototype, "stageAction", void 0);
+    __decorate([
+        (0, typeorm_1.OneToOne)(function () { return Stage_Test_1.Stage_Test; }, function (stageTest) { return stageTest.stage; }),
+        __metadata("design:type", Stage_Test_1.Stage_Test)
+    ], Stage.prototype, "stageTest", void 0);
     Stage = __decorate([
         (0, typeorm_1.Entity)()
     ], Stage);

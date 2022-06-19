@@ -2,6 +2,7 @@ import { Expose, Type } from "class-transformer";
 import { IsDefined, Matches, IsOptional } from "class-validator";
 import {RightAnswerDto} from './RightAnswerDto';
 import {AnswerDto} from './AnswerDto';
+import { QuestionEnum } from '../../entity/Question';
 
 
 export abstract class QuestionDto {
@@ -17,7 +18,7 @@ export abstract class QuestionDto {
 
     @IsDefined()
     @Expose()
-    type: string;
+    type: QuestionEnum;
 
     // type: type
     @IsDefined()

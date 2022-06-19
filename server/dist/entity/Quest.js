@@ -13,6 +13,7 @@ exports.Quest = void 0;
 var typeorm_1 = require("typeorm");
 var Quest_User_1 = require("./Quest_User");
 var Stage_1 = require("./Stage");
+var User_1 = require("./User");
 var Quest = /** @class */ (function () {
     function Quest() {
     }
@@ -49,6 +50,10 @@ var Quest = /** @class */ (function () {
         (0, typeorm_1.OneToMany)(function () { return Stage_1.Stage; }, function (stage) { return stage.quest; }, { cascade: ["update", "remove"] }),
         __metadata("design:type", Array)
     ], Quest.prototype, "stages", void 0);
+    __decorate([
+        (0, typeorm_1.ManyToOne)(function () { return User_1.User; }, function (user) { return user.quests; }),
+        __metadata("design:type", User_1.User)
+    ], Quest.prototype, "author", void 0);
     Quest = __decorate([
         (0, typeorm_1.Entity)()
     ], Quest);
