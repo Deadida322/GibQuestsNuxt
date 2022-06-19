@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne} from "typeorm"
 import {Quest_User} from './Quest_User';
 import {Stage} from './Stage';
+import {User} from './User';
 
 @Entity()
 export class Quest {
@@ -15,21 +16,24 @@ export class Quest {
     title: string
 
     @Column({
-        length:255,
+        type: "text",
         nullable: false
     })
     description: string
 
     @Column({
-        length:500,
+        type: "text",
         nullable: false
     })
     image: string
 
-    @OneToMany(() => Quest_User, (quest_User) => quest_User.quest) // note: we will create author property in the Photo class below
+    @OneToMany(() => Quest_User, (quest_User) => quest_User.quest, {cascade: ["update", "remove"]})
     quest_user: Quest_User[]
 
-    @OneToMany(() => Stage, (stage) => stage.quest) // note: we will create author property in the Photo class below
+    @OneToMany(() => Stage, (stage) => stage.quest, {cascade: ["update", "remove"]}) 
     stages: Stage[]
+
+    @ManyToOne(() => User, (user) => user.quests)
+    author: User[]
 
 }

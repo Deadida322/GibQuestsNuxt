@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from "typeorm"
-import {Stage, StageEnum,stageEnumArray} from './Stage';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from "typeorm"
+import {Stage} from './Stage';
 
 @Entity()
 export class Stage_Action {
@@ -7,22 +7,37 @@ export class Stage_Action {
     @PrimaryGeneratedColumn()
     id: number
 
+    @Column({
+        type: "text",
+        nullable: true
+    })
+    url: string
 
     @Column({
-        type: "enum",
-        enum: stageEnumArray,
-        default: 'Текст',
-        nullable: false
+        type: "float",
+        nullable: true
     })
-    type: StageEnum
+    lat: number
 
     @Column({
-        length:50,
-        nullable: false
+        type: "float",
+        nullable: true
     })
-    name: string
+    long: number
 
-    @OneToOne(() => Stage, (stage) => stage.stageAction)
+    @Column({
+        type: "text",
+        nullable: true
+    })
+    to: string
+
+    @Column({
+        nullable: true
+    })
+    text: string
+
+    @OneToOne(() => Stage)
+    @JoinColumn()
     stage: Stage
 
 }
