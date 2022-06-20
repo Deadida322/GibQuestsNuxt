@@ -4,7 +4,7 @@
         <v-main class="pa-2 mt-4">
             <Search :placeholder="'Найти среди своих'" @search="search"/>
             <Quest edit v-for="(item, key) in createdQuests" :key="key" :item="item"/>
-            <Add @click="$router.push(`/create/${createdQuests+1}`)" class="mt-5"/>
+            <Add @click="createNew" class="mt-5"/>
         </v-main>
     </div>
 </template>
@@ -25,6 +25,10 @@ export default {
     methods: {
         search(e){
             console.log(e)
+        },
+        createNew(){
+            this.$store.commit('create/removeCurrentQuest')
+            this.$router.push(`/create/new`)
         }
     },
     computed: {

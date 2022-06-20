@@ -8,8 +8,8 @@
                 </div>
             </v-btn>
             <div class="d-flex flex-grow-1 px-2 flex-column">
-                <v-text-field :value="stage.title" clearable label="Название этапа" solo/>
-                <v-text-field :value="stage.url" v-if="stage.type==='Видео'" clearable label="Url видео" solo/>
+                <v-text-field v-model="stage.name" clearable label="Название этапа" solo/>
+                <v-text-field v-model="stage.url" v-if="stage.type==='Видео'" clearable label="Url видео" solo/>
                 <v-btn color="primary" @click="createText" v-if="stage.type==='Текст'">Редактор текста</v-btn>
                 <v-btn color="primary" @click="createTest" v-else-if="stage.type==='Тест'">Редактор тестов</v-btn>
                 <v-btn color="primary" @click="createMap" v-else-if="stage.type==='Карта'">Редактор карт</v-btn>
@@ -26,8 +26,19 @@
 
 <script>
 export default {
+    created(){
+        console.log(
+            'stage'
+        )
+        this.stage = this.item
+    },
+    data(){
+        return{
+            stage: {}
+        }
+    },
     props:{
-        stage:{
+        item:{
             type: Object,
             required: true
         },
@@ -48,6 +59,14 @@ export default {
         },
         createTest(){
             this.$emit('createTest')
+        }
+    },
+    watch:{
+        stage:{
+            handler: function(val){
+                this.$emit('stageChange', val)
+            },
+            deep: true
         }
     }
 }

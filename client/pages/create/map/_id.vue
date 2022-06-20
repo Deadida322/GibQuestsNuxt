@@ -2,13 +2,19 @@
     <div>
         <Header class="z-index-100" title='Отметить точку'/>
         <v-main class="pa-2 mt-4">
-            <div @click="$router.go(-1)" class="mb-4">
-                <v-icon large>
-                    mdi-arrow-left
-                </v-icon>
-            </div>
+            <v-row class="my-3 d-flex justify-space-between text-center align-center">
+                <v-col no-gutters class="col col-2">
+                    <v-icon @click="$router.go(-1)" large>
+                        mdi-arrow-left
+                    </v-icon>
+                </v-col>
+                <v-col class="col secondary--text text-h6 col-6">
+                {{quest.id}} / {{id}}
+                </v-col>
+                <v-col class="col col-2"></v-col>
+            </v-row>
             <div class="map-container">
-                <l-map :zoom="zoom" :center="center" ref="map">
+                <l-map :zoom="zoom" :center="currentLoc" ref="map">
                     <l-tile-layer
                         :url="url"
                         :attribution="attribution"
@@ -18,6 +24,14 @@
                             :options="{ permanent: true, interactive: true }">
                             <div>
                                 Вы здесь
+                            </div>
+                        </l-tooltip>
+                    </l-marker>
+                    <l-marker :lat-lng="currentLoc">
+                        <l-tooltip 
+                            :options="{ permanent: true, interactive: true }">
+                            <div>
+                                Текущая 
                             </div>
                         </l-tooltip>
                     </l-marker>
@@ -31,8 +45,16 @@
                 Долгота
             </div>
             <v-text-field readonly solo class="mt-2" v-model.number="long"/>
-            <v-btn class="w-100" color="primary">сохранить</v-btn>
+            <v-btn @click="setStage" class="w-100" color="primary">Отметить здесь</v-btn>
         </v-main>
+        <v-snackbar v-model="snackbar">
+            Изменения сохранены
+            <template v-slot:action="{ attrs }">
+                <v-btn class="primary--text" text small @click="snackbar=!snackbar">
+                    Закрыть
+                </v-btn>
+            </template>
+        </v-snackbar>
     </div>
 </template>
 
@@ -40,13 +62,17 @@
 import Header from '~/components/UI/Header'
 import { latLng } from "leaflet";
 import { Icon } from 'leaflet';
-
 export default {
     components: {
         Header
     },
     data(){
         return{
+            quest: {},
+            snackbar: false,
+            stage: {},
+            currentLat: 0,
+            currentLong: 0,
             url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
             attribution:
                 '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -54,10 +80,19 @@ export default {
             long: 0,
             zoom: 16,
             geo: null,
-            showPosition: true
+            id: 0
         }
     },
-    beforeMount(){
+    created(){
+        this.id = this.$route.params.id
+        this.quest = {...this.$store.getters['create/getCurrentQuest']}
+        this.stage = {...this.$store.getters['create/getCurrentStage']}
+        if(this.stage.x){
+            this.currentLat = this.stage.x
+        }
+        if(this.stage.y){
+            this.currentLong = this.stage.y
+        }
         function success({ coords }) {
             const { latitude, longitude } = coords
             const position = [latitude, longitude]
@@ -65,6 +100,12 @@ export default {
             this.long = position[1]
             console.log(position)
         }
+        navigator.geolocation.getCurrentPosition(()=>{
+            console.log('Да БЛЯТЬЬ, ДА Я НЕ МОГУ')
+        }, error, {
+            enableHighAccuracy: true,
+            timeout: 10000
+        })
         success=success.bind(this)
         function error({ message }) {
             console.log(message) 
@@ -84,9 +125,28 @@ export default {
             shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
         });
     },
+    destroyed() {
+        console.log('unmount')
+        navigator.geolocation.clearWatch(this.geo)
+    },
+    methods:{
+        setStage(){
+            this.currentLat = this.lat
+            this.currentLong = this.long
+            this.stage.x = this.currentLat
+            this.stage.y = this.currentLong
+            this.quest.stages[this.id] = this.stage
+            console.log(this.quest)
+            this.$store.commit('create/setCurrentQuest', this.quest)
+            this.snackbar = true
+        },
+    },
     computed:{
         center(){
             return latLng(this.lat, this.long)
+        },
+        currentLoc(){
+            return latLng(this.currentLat, this.currentLong)
         }
     }
 }

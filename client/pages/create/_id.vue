@@ -2,35 +2,89 @@
     <div>
         <Header title='Создать'/>
         <v-main class="pa-2 mt-4">
-            <div @click="$router.go(-1)" class="mb-4">
-                <v-icon large>
-                    mdi-arrow-left
-                </v-icon>
-            </div>
-            <v-text-field solo label="Название"></v-text-field>
+            <v-row class="my-3 d-flex justify-space-between text-center align-center">
+                <v-col no-gutters class="col col-2">
+                    <v-icon @click="$router.go(-1)" large>
+                        mdi-arrow-left
+                    </v-icon>
+                </v-col>
+                <v-col class="col secondary--text text-h6 col-6">
+                {{quest.id}}
+                </v-col>
+                <v-col class="col col-2"></v-col>
+            </v-row>
+            <v-text-field 
+                @input="$v.quest.title.$touch()"
+                @blur="$v.quest.title.$touch()"
+                v-model="quest.title"
+                :error-messages="titleErrors"
+                :counter="20" solo label="Название"
+            />
             <div class="text-h5">Описание</div>
-            <v-card class="mt-2 mb-4">
+            <v-card v-ripple="false" @click="$v.quest.description.$touch()"
+                @blur="$v.quest.description.$touch()" class="mt-2 mb-2">
                 <wysiwyg v-model="quest.description"/>
             </v-card>
-            <ImageInput @change="setImage" :background="background"/>
+            <v-alert
+                border="top"
+                color="red lighten-2"
+                v-if="descriptionErrors.length"
+                dark
+            >
+                    {{descriptionErrors[0]}}
+            </v-alert>
+            <ImageInput 
+                @click="$v.quest.image.$touch()" 
+                :class="{'redBorder': imageErrors.length}" 
+                @change="setImage" 
+                :background="background"/>
+            <v-alert
+                class="mt-2"
+                border="top"
+                color="red lighten-2"
+                v-if="imageErrors.length"
+                dark
+            >
+                {{imageErrors[0]}}
+            </v-alert>
             <div class="mt-4 mb-8 d-flex align-center justify-space-between">
                 <div class="text-h5">Этапы</div>
-                <v-btn fab small color="success">
-                    <v-icon>mdi-shuffle</v-icon>
-                </v-btn>
+                <Shuffling v-if="quest.stages.length" @shuffleComplete="shuffleComplete" :items="quest.stages"/>
             </div>
-            <Stage 
-                v-for="(item, idx) in quest.stages" 
-                class="mb-7" 
-                :stage="item" 
-                :idx="idx" 
-                :key="idx"
-                @remove="removeStage(idx)"
-                @createQR="createQR(idx)"
-                @createText="createText(idx)"
-                @createTest="createTest(idx)"
-                @createMap="createMap(idx)"
-            />
+            <wrapper :key="key">
+                <Stage 
+                    v-for="(item, idx) in quest.stages" :key="idx" 
+                    class="mb-7"
+                    :class="{'redBorder': myStagesErrors[idx]}" 
+                    :item="item" 
+                    :idx="idx" 
+                    @remove="removeStage(idx)"
+                    @createQR="createQR(idx)"
+                    @createText="createText(idx)"
+                    @createTest="createTest(idx)"
+                    @createMap="createMap(idx)"
+                    @stageChange="stageChange($event, idx)"
+                />
+            </wrapper>
+            
+            <v-alert
+                class="mt-2"
+                border="top"
+                color="red lighten-2"
+                v-if="stagesErrors.length"
+                dark
+            >
+                {{stagesErrors[0]}}
+            </v-alert>
+            <v-alert
+                class="mt-2"
+                border="top"
+                color="red lighten-2"
+                v-if="myStagesErrors.length"
+                dark
+            >
+                Поля в этапах не могут быть пустыми
+            </v-alert>
             <Add class="mt-4">
                 <v-list>
                     <v-list-item-group>
@@ -40,6 +94,11 @@
                     </v-list-item-group>
                 </v-list>
             </Add>
+            <v-card-actions class="pa-0 pt-2">
+                <v-spacer/>
+                <v-btn>Отмена</v-btn>
+                <v-btn @click="setQuest()" color="primary">Сохранить</v-btn>
+            </v-card-actions>
         </v-main>
     </div>
 </template>
@@ -52,9 +111,32 @@ import Add from '~/components/UI/Add'
 import Stage from '~/components/create/Stage'
 import ImageInput from '~/components/UI/ImageInput'
 import { mapState } from 'vuex'
+import { validationMixin } from 'vuelidate'
+import { required, maxLength, minLength, email } from 'vuelidate/lib/validators'
+import Shuffling from '~/components/create/Shuffling.vue'
+import wrapper from '~/components/UI/wrapper'
+
 export default {
+    mixins: [validationMixin],
+    validations: {
+        quest: {
+            title: { required, maxLength: maxLength(20) },
+            description: { required, minLength: minLength(10) },
+            image: { required },
+            stages: { required }
+        }
+    },
+    created(){
+        this.currentId = this.$route.params.id
+        this.quest = JSON.parse(JSON.stringify(this.$store.getters['create/getCurrentQuest']))
+        if(this.currentId!=this.quest.id){
+            this.$router.push(`/create/${this.quest.id}`)
+        }
+    },
     data(){
         return{
+            key: 0,
+            currentId: '',
             background: '',
             types:[
                 'Текст',
@@ -63,72 +145,7 @@ export default {
                 'Карта',
                 'Тест'
             ],
-            quest:{
-                title: '',
-                image: '',
-                description: '',
-                stages: [
-                    {
-                        title: 'Вступительное видео',
-                        type: 'Видео',
-                        url: 'https://youtube.com/watch?someuriCode'
-                    },
-                    {
-                        title: 'Знакомство',
-                        type: 'Текст',
-                        url: 'https://youtube.com/watch?someuriCode'
-                    },
-                    {
-                        type: 'Тест',
-                        title: 'Пройди этот тест',
-                        questions: [
-                            {
-                                contain: 'При чём здесь ёжики?',
-                                answers: [
-                                    'Смешарики',
-                                    'Лошарики',
-                                    'Кикорики'
-                                ],
-                                type: 'Множественный выбор',
-                                rightAnswer: ['Смешарики']
-                            },
-                            {
-                                contain: 'Какие размеры у объекта?',
-                                answers: [
-                                    'Да',
-                                    'нет',
-                                ],
-                                type: 'Выбор',
-                                rightAnswer: ['Да']
-                            },
-                            {
-                                contain: 'Оказавшись перед Путиным, что вы ему скажете?',
-                                answers: [],
-                                type: 'Вписать ответ',
-                                rightAnswer: ['Ненавижу вас']
-                            },
-                            {
-                                contain: 'Расставьте в верно порядке',
-                                answers: [
-                                    '1000',
-                                    '2000',
-                                    '3000'
-                                ],
-                                type: 'Расположить по порядку',
-                                rightAnswer: ['1000', '2000', '3000']
-                            }
-                        ]
-                    },
-                    {
-                        title: 'Дойди до ручки',
-                        type: 'Карта',
-                        coords: {
-                            lat: 21.2323, 
-                            attitude: 121.12
-                        }
-                    },
-                ]
-            }
+            quest:{},
         }
     },
     components: {
@@ -137,20 +154,27 @@ export default {
         Quest,
         Add,
         ImageInput,
-        Stage
+        Stage,
+        Shuffling,
+        wrapper
     },
     methods: {
         search(e){
             console.log(e)
         },
+        stageChange(e, idx){
+            console.log('stegeChange')
+            this.myStagesErrors
+            this.quest.stages[idx] = e
+        },
         setImage(e){
             this.quest.image = e
             let reader = new FileReader();
+            console.log(e)
             reader.readAsDataURL(e);
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
-            console.log(this.quest.image)
         },
         createTest(id){
             this.$store.commit('create/setCurrentStage', this.quest.stages[id])
@@ -169,25 +193,94 @@ export default {
             this.$router.push(`/create/QR/${id}`)
         },
         addStage(type){
-            this.quest.stages.push( 
-                {
-                    title: `Этап ${this.quest.stages.length+1}`,
-                    type
-                }
-            )
+            this.$v.quest.stages.$touch()
+            let toPush =  {
+                title: `Этап ${this.quest.stages.length+1}`,
+                type,
+            }
+            if(type=='Видео') toPush.url = 'https://youtube.com/watch?v=' 
+            this.quest.stages.push(toPush)
+            this.$store.commit('create/setCurrentStage', toPush)
         },
         removeStage(idx){
             this.quest.stages.splice(idx, 1)
+        },
+        shuffleComplete(stages){
+            this.key++
+            console.log('shuffle')
+            this.quest.stages=stages
+        },
+        setQuest(){
+            this.$v.quest.$touch()
+            if(!this.$v.quest.$anyError && this.summaryStagesErrors){
+                console.log(this.quest)
+            }
         }
     },
     computed: {
-        ...mapState('create', ['createdQuests'])
+        ...mapState('create', ['createdQuests']),
+        titleErrors () {
+            const errors = []
+            if (!this.$v.quest.title.$dirty) return errors
+            !this.$v.quest.title.maxLength && errors.push('Это, блять, название, а не сочинение')
+            !this.$v.quest.title.required && errors.push('И как тебя, долбоёба, нез названия найти?')
+            return errors
+        },
+        descriptionErrors () {
+            const errors = []
+            if (!this.$v.quest.description.$dirty) return errors
+            !this.$v.quest.description.minLength && errors.push('А вот это как раз сочинение, а не название')
+            !this.$v.quest.description.required && errors.push('Ну да, описание нам нахуй не нужно')
+            return errors
+        },
+        imageErrors () {
+            const errors = []
+            if (!this.$v.quest.image.$dirty) return errors
+            !this.$v.quest.image.required && errors.push('Без картинки ваще заебись, конечно')
+            return errors
+        },
+        stagesErrors () {
+            const errors = []
+            if (!this.$v.quest.stages.$dirty) return errors
+            !this.$v.quest.stages.required && errors.push('Да, бля, а проходить он че будет?')
+            return errors
+        },
+        summaryStagesErrors(){
+            for (let i of this.myStagesErrors){
+                if (i) return false
+            }
+            return true
+        },
+        myStagesErrors () {
+            const errors = []
+            if (!this.$v.quest.stages.$dirty) return errors
+            for(let i in this.quest.stages){
+                console.log(this.quest.stages[i].name)
+                if(!this.quest.stages[i].name) errors[i]=true
+                if(this.quest.stages[i].type=='Текст'){
+                    if(!this.quest.stages[i].text) errors[i]=true
+                }
+                if(this.quest.stages[i].type=='Видео'){
+                    const reg = new RegExp(/https:\/\/(www.|.{0,})youtube\.com\/watch\?v=.{3,}/)
+                    if(!(this.quest.stages[i].url && reg.test(this.quest.stages[i].url.toLowerCase()))) errors[i]=true
+                }
+                if(this.quest.stages[i].type=='QR'){
+                    if(!this.quest.stages[i].to) errors[i]=true
+                }
+                if(this.quest.stages[i].type=='Карта'){
+                    if(!this.quest.stages[i].x || !this.quest.stages[i].y) errors[i]=true
+                }
+            }
+            return errors
+        },
     }
 }
 </script>
 
 <style>
-  
+  .redBorder{
+    border: 2px solid red  !important
+  }
 </style>
 
 

@@ -224,6 +224,14 @@ export default {
                 rightAnswer: ['Смешарики']
             })
         }
+    },
+    watch:{
+        questions:{
+            handler:function(){
+                this.$emit('testChange', this.questions)
+            },
+            deep: true
+        }
     }
 }
 </script>

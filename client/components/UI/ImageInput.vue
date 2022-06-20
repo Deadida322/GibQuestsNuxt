@@ -1,5 +1,6 @@
 <template>
     <div 
+        @click="$emit('click')"
         class="IIContainer br-4"
         @dragover="drag = true"
         @mouseleave="drag = false"
@@ -87,19 +88,9 @@ export default {
     computed:{
         ...mapState('auth', ['base']),
         backgroundComputed(){
-            console.log('some')
             if (!this.background) return 'https://paltodaytv.com/img/default.jpg'
             if (this.background.length > 100) return this.background
             return this.base+this.background
-        }
-    },
-    watch:{
-        backgroundComputed(val){
-            console.log(val)
-        },
-        background(val){
-            console.log(val)
-            
         }
     }
 }
