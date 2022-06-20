@@ -45,27 +45,28 @@ const AppRoutes: Route[] = [
     method: "get",
     action: quest.trackQuest
   },
-    // {
-    //     path: "/author/pure",
-    //     method: "get",
-    //     action: author.getPureSql
-    // },
-    // {
-    //     path: "/author",
-    //     method: "post",
-    //     action: author.create
-    // },
-    // {
-    //     path: "/ping",
-    //     method: "get",
-    //     action: system.ping
-    // },
-    // {
-    //     path: "/clear",
-    //     method: "get",
-    //     action: system.clearDb
-    // }
+  {
+    path: "/updateImage",
+    method: "post",
+    action: quest.updateImage
+  },
+  {
+    path: "/getQuest",
+    method: "get",
+    action: quest.getQuest
+  },
+  {
+    path: "/getImage",
+    method: "get",
+    action: quest.getImage
+  },
+  {
+    path: "/qr",
+    method: "get",
+    action: quest.createQrTest
+  },
   
+   
 ];
 
 export function initRoutes(app: Express) {

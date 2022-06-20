@@ -27,10 +27,10 @@ export class Quest {
     })
     image: string
 
-    @OneToMany(() => Quest_User, (quest_User) => quest_User.quest, {cascade: ["update", "remove"]})
+    @OneToMany(() => Quest_User, (quest_User) => quest_User.quest, {cascade: true})
     quest_user: Quest_User[]
 
-    @OneToMany(() => Stage, (stage) => stage.quest, {cascade: ["update", "remove"]}) 
+    @OneToMany(() => Stage, (stage) => stage.quest, {cascade: true}) 
     stages: Stage[]
 
     @ManyToOne(() => User, (user) => user.quests)

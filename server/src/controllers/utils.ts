@@ -12,17 +12,6 @@ export async function toDto<T>(request: Request, type: ClassConstructor<T>): Pro
 
 }
 
-// export async function makeFreshDatabase() {
-//     const opts = { ...config }
-
-//     opts.synchronize = true;
-//     opts.dropSchema = true;
-//     opts.name = 'test-cleaner';
-
-//     const connection = await createConnection(opts);
-//     await connection.close();
-// }
-
 export function ok(data?: any): ResponseDto {
     return {
         status: 'ok',

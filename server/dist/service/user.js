@@ -38,6 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 var User_1 = require("../entity/User");
+var error_1 = require("../error");
 var utils_1 = require("./utils");
 var data_source_1 = require("../data-source");
 var UserService = /** @class */ (function () {
@@ -50,14 +51,40 @@ var UserService = /** @class */ (function () {
             return __generator(this, function (_a) {
                 userRep = data_source_1.AppDataSource.getRepository(User_1.User);
                 return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
-                        var oldUser;
+                        var oldUser, user;
                         return __generator(this, function (_a) {
-                            oldUser = userRep.findOneBy({ username: username });
-                            console.log(oldUser);
-                            // if(ol)
-                            // const user = new User()
-                            // return await userRep.save(user); 
-                            return [2 /*return*/, null];
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, userRep.findOneBy({ username: username })];
+                                case 1:
+                                    oldUser = _a.sent();
+                                    if (oldUser) {
+                                        throw new error_1.AlreadyExistsError();
+                                    }
+                                    user = new User_1.User();
+                                    user.name = name;
+                                    user.surname = surname;
+                                    user.password = password;
+                                    user.username = username;
+                                    return [4 /*yield*/, userRep.save(user)];
+                                case 2: return [2 /*return*/, _a.sent()];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    UserService.getUser = function (username, password) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userRep;
+            var _this = this;
+            return __generator(this, function (_a) {
+                userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, userRep.findOneBy({ username: username, password: password })];
+                                case 1: return [2 /*return*/, _a.sent()];
+                            }
                         });
                     }); })];
             });

@@ -36,13 +36,44 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.register = exports.get = void 0;
+exports.auth = exports.register = exports.get = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var dto_1 = require("./dto");
 var error_1 = require("../error");
 var user_1 = require("../service/user");
 var utils_1 = require("./utils");
+var jwt = require("jsonwebtoken");
+var config = require("config");
+var secret = config.get("secret");
+var durationSecret = config.get("durationSecret");
+function createToken(user) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, jwt.sign({ username: user.username, password: user.password }, secret, { expiresIn: durationSecret })];
+                case 1: return [2 /*return*/, _a.sent()];
+            }
+        });
+    });
+}
+function getUserByDecoded(decoded) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user, _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, user_1.UserService.getUser(decoded.username, decoded.password)];
+                case 1:
+                    user = _b.sent();
+                    _a = user;
+                    return [4 /*yield*/, createToken(user)];
+                case 2:
+                    _a.token = _b.sent();
+                    return [2 /*return*/, user];
+            }
+        });
+    });
+}
 function get(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var username, res;
@@ -66,7 +97,7 @@ function get(request, response) {
 exports.get = get;
 function register(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var user, errors, res;
+        var user, errors, res, token, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -77,16 +108,95 @@ function register(request, response) {
                     if (errors.length) {
                         throw new error_1.ArgumentError();
                     }
-                    return [4 /*yield*/, user_1.UserService.add(user.name, user.password, user.surname, user.username)];
+                    _a.label = 2;
                 case 2:
+                    _a.trys.push([2, 5, , 6]);
+                    return [4 /*yield*/, user_1.UserService.add(user.name, user.password, user.surname, user.username)];
+                case 3:
                     res = _a.sent();
+                    return [4 /*yield*/, createToken(user)];
+                case 4:
+                    token = _a.sent();
+                    res.token = token;
+                    // var logToken = jwt.verify(token, secret)
+                    // jwt.decode(token, secret,).exp
                     response.json((0, utils_1.ok)(res));
-                    return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 5:
+                    e_1 = _a.sent();
+                    response.json((0, utils_1.error)(e_1.message));
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
 }
 exports.register = register;
+function auth(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user, errors, res, token;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    user = (0, class_transformer_1.plainToClass)(dto_1.UserDto, request.body);
+                    return [4 /*yield*/, (0, class_validator_1.validate)(user, { skipMissingProperties: true })];
+                case 1:
+                    errors = _a.sent();
+                    if (!errors.length) return [3 /*break*/, 2];
+                    throw new error_1.ArgumentError();
+                case 2:
+                    if (!!user.token) return [3 /*break*/, 7];
+                    return [4 /*yield*/, user_1.UserService.getUser(user.username, user.password)];
+                case 3:
+                    res = _a.sent();
+                    if (!!res) return [3 /*break*/, 4];
+                    response.json((0, utils_1.error)('Такого пользователя нет'));
+                    return [3 /*break*/, 6];
+                case 4: return [4 /*yield*/, createToken(user)];
+                case 5:
+                    token = _a.sent();
+                    res.token = token;
+                    response.json((0, utils_1.ok)(res));
+                    _a.label = 6;
+                case 6: return [3 /*break*/, 8];
+                case 7:
+                    jwt.verify(user.token, secret, function (err, decoded) {
+                        return __awaiter(this, void 0, void 0, function () {
+                            var res;
+                            return __generator(this, function (_a) {
+                                switch (_a.label) {
+                                    case 0:
+                                        if (!err) return [3 /*break*/, 1];
+                                        response.json((0, utils_1.error)(err));
+                                        return [3 /*break*/, 3];
+                                    case 1: return [4 /*yield*/, getUserByDecoded(decoded)];
+                                    case 2:
+                                        res = _a.sent();
+                                        response.json((0, utils_1.ok)(res));
+                                        _a.label = 3;
+                                    case 3: return [2 /*return*/];
+                                }
+                            });
+                        });
+                    });
+                    _a.label = 8;
+                case 8: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.auth = auth;
+// jwt.verify(token, 'shhhhh', function(err, decoded) {
+//     if (err) {
+//       /*
+//         err = {
+//           name: 'TokenExpiredError',
+//           message: 'jwt expired',
+//           expiredAt: 1408621000
+//         }
+//       */
+//     }
+//   });
 // export async function create(request: Request, response: Response) {
 //     const user = plainToClass(AuthorDto, request.body);
 //     const errors = await validate(user, { skipMissingProperties: true });

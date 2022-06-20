@@ -39,6 +39,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestService = void 0;
 var Quest_1 = require("../entity/Quest");
 var User_1 = require("../entity/User");
+var error_1 = require("../error");
 var utils_1 = require("./utils");
 var data_source_1 = require("../data-source");
 var Stage_1 = require("../entity/Stage");
@@ -47,17 +48,13 @@ var Question_1 = require("../entity/Question");
 var Answer_1 = require("../entity/Answer");
 var RightAnswer_1 = require("../entity/RightAnswer");
 var Stage_Action_1 = require("../entity/Stage_Action");
+var Quest_User_1 = require("../entity/Quest_User");
 function saveQuestion(q, stageTest) {
     return __awaiter(this, void 0, void 0, function () {
-        var questRep, stageRep, userRep, stageTestRep, stageActionRep, questionRep, answerRep, rightAnswerRep, question, saveQuest;
+        var questionRep, answerRep, rightAnswerRep, question, saveQuest;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
-                    stageRep = data_source_1.AppDataSource.getRepository(Stage_1.Stage);
-                    userRep = data_source_1.AppDataSource.getRepository(User_1.User);
-                    stageTestRep = data_source_1.AppDataSource.getRepository(Stage_Test_1.Stage_Test);
-                    stageActionRep = data_source_1.AppDataSource.getRepository(Stage_Action_1.Stage_Action);
                     questionRep = data_source_1.AppDataSource.getRepository(Question_1.Question);
                     answerRep = data_source_1.AppDataSource.getRepository(Answer_1.Answer);
                     rightAnswerRep = data_source_1.AppDataSource.getRepository(RightAnswer_1.RightAnswer);
@@ -175,6 +172,122 @@ var QuestService = /** @class */ (function () {
                                     _a.sent();
                                     // console.log(stages[2].questions);
                                     return [2 /*return*/, resQuestSave];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    QuestService.process = function (userId, questId, progress) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep, userRep, questUserRep, user, quest, questUser, newQuestUser;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                        userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                        questUserRep = data_source_1.AppDataSource.getRepository(Quest_User_1.Quest_User);
+                        return [4 /*yield*/, userRep.findOneBy({ id: userId })];
+                    case 1:
+                        user = _a.sent();
+                        return [4 /*yield*/, questRep.findOneBy({ id: questId })];
+                    case 2:
+                        quest = _a.sent();
+                        if (!user || !quest) {
+                            throw new error_1.NotFoundError('Пользователь или квест');
+                        }
+                        return [4 /*yield*/, questUserRep.findOneBy({ user: user, quest: quest })];
+                    case 3:
+                        questUser = _a.sent();
+                        if (!(!progress && !questUser)) return [3 /*break*/, 5];
+                        newQuestUser = new Quest_User_1.Quest_User();
+                        newQuestUser.progress = 1;
+                        newQuestUser.quest = quest;
+                        newQuestUser.user = user;
+                        return [4 /*yield*/, questUserRep.save(newQuestUser)];
+                    case 4: return [2 /*return*/, _a.sent()];
+                    case 5:
+                        if (!(progress && !questUser)) return [3 /*break*/, 6];
+                        throw new error_1.NotFoundError('Прохождение квеста для пользователя');
+                    case 6:
+                        if (!(progress && questUser)) return [3 /*break*/, 8];
+                        if (progress <= questUser.progress) {
+                            throw new error_1.UnexpectedError('Этап квеста меньше или равен текущему');
+                        }
+                        if (progress - 1 !== questUser.progress) {
+                            throw new error_1.UnexpectedError('Новый этап квеста больше чем на 1, чем текущий этап');
+                        }
+                        questUser.progress = progress;
+                        return [4 /*yield*/, questUserRep.save(questUser)];
+                    case 7: return [2 /*return*/, _a.sent()];
+                    case 8: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    QuestService.track = function (userId, questId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep, userRep, questUserRep, author, quest;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                        userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                        questUserRep = data_source_1.AppDataSource.getRepository(Quest_User_1.Quest_User);
+                        return [4 /*yield*/, userRep.findOneBy({ id: userId })];
+                    case 1:
+                        author = _a.sent();
+                        return [4 /*yield*/, questRep.findOneBy({ id: questId, author: author })];
+                    case 2:
+                        quest = _a.sent();
+                        if (!author || !quest) {
+                            throw new error_1.NotFoundError('Автор или квест автора');
+                        }
+                        return [4 /*yield*/, questUserRep.findBy({ quest: quest })];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    QuestService.updateImagePath = function (id, path) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep, quest;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                        return [4 /*yield*/, questRep.findOneBy({ id: id })];
+                    case 1:
+                        quest = _a.sent();
+                        if (!quest) {
+                            throw new error_1.NotFoundError('Квест');
+                        }
+                        quest.image = path;
+                        return [4 /*yield*/, questRep.save(quest)];
+                    case 2: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    QuestService.getQuest = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                data_source_1.AppDataSource.createQueryBuilder;
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var quest;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Stage_1.Stage).createQueryBuilder('stage')
+                                        .leftJoinAndSelect("stage.stageAction", "stage_action")
+                                        .where("stage_action.stageId = stage_action.id")
+                                        .getMany()];
+                                case 1:
+                                    quest = _a.sent();
+                                    console.log(quest);
+                                    // .leftJoinAndSelect(Stage_Action, "stage_action", "stage_action.stageId = stage.id")
+                                    // .leftJoinAndSelect(Stage_Test, "stage_test", "stage_test.stageId = stage.id")
+                                    return [2 /*return*/, quest];
                             }
                         });
                     }); })];

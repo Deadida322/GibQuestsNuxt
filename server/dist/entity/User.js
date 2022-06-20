@@ -49,11 +49,11 @@ var User = /** @class */ (function () {
         __metadata("design:type", String)
     ], User.prototype, "password", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Quest_User_1.Quest_User; }, function (quest_User) { return quest_User.user; }, { cascade: ["update", "remove"] }),
+        (0, typeorm_1.OneToMany)(function () { return Quest_User_1.Quest_User; }, function (quest_User) { return quest_User.user; }, { cascade: true }),
         __metadata("design:type", Array)
     ], User.prototype, "quest_user", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Quest_1.Quest; }, function (quest) { return quest.author; }, { cascade: ["update", "remove"] }),
+        (0, typeorm_1.OneToMany)(function () { return Quest_1.Quest; }, function (quest) { return quest.author; }, { cascade: true }),
         __metadata("design:type", Array)
     ], User.prototype, "quests", void 0);
     User = __decorate([

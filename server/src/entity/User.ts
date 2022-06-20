@@ -32,10 +32,10 @@ export class User {
     })
     password: string
 
-    @OneToMany(() => Quest_User, (quest_User) => quest_User.user, {cascade: ["update", "remove"]}) 
+    @OneToMany(() => Quest_User, (quest_User) => quest_User.user, {cascade: true}) 
     quest_user: Quest_User[]
 
-    @OneToMany(() => Quest, (quest) => quest.author, {cascade: ["update", "remove"]}) 
+    @OneToMany(() => Quest, (quest) => quest.author, {cascade: true}) 
     quests: Quest[]
 
 }

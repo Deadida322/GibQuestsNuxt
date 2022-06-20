@@ -46,9 +46,9 @@ export class QuestService {
         const userRep = AppDataSource.getRepository(User);
         const stageTestRep = AppDataSource.getRepository(Stage_Test);
         const stageActionRep = AppDataSource.getRepository(Stage_Action);
-        const questionRep = AppDataSource.getRepository(Question);
-        const answerRep = AppDataSource.getRepository(Answer);
-        const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
+        // const questionRep = AppDataSource.getRepository(Question);
+        // const answerRep = AppDataSource.getRepository(Answer);
+        // const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
         return catchOrmErrors(async () => {
             const quest = new Quest();
             quest.title = title;
@@ -118,110 +118,9 @@ export class QuestService {
                     
                 }
 
-                
-            })
-            // console.log(stages[2].questions);
-            
+            })            
              return resQuestSave;
         });
-        // return catchOrmErrors(async () => {
-        //     const quest = new Quest();
-        //     quest.title = title;
-        //     quest.description = description;
-        //     quest.image = image;
-        //     const author = await userRep.findOneBy({username}); 
-        //     quest.author = author
-        //     const resQuestSave = await questRep.save(quest)
-        //     let stagesSave: Stage[] = new Array()
-        //     let stagesTestSave: Stage_Test[]= new Array()
-        //     let questionSave: Question[]= new Array()
-        //     let answerSave: Answer[]= new Array()
-        //     let rightAnswerSave: RightAnswer[]= new Array()
-
-        //     await stages.forEach(s => {
-        //         let stage = new Stage()
-        //         stage.name = s.name
-        //         stage.number = s.number
-        //         stage.quest = quest
-        //         stage.type = s.type
-        //         stagesSave.push(stage)
-                
-        //         if(stage.type === "Тест") {
-        //             // console.log(s);
-        //             const stageTest = new Stage_Test()
-        //             stageTest.stage = stage
-        //             stageTest.title = s.test.title
-        //             stagesTestSave.push(stageTest)
-        //             s.test.questions.forEach(q => {
-        //                 let question = new Question()
-                        
-        //                 question.number = q.number
-        //                 question.contain = q.contain
-        //                 question.type = q.type
-        //                 question.stageTest = stageTest
-        //                 questionSave.push(question)
-        //                 q.answers.forEach(a => {
-        //                     let answer = new Answer()
-        //                     answer.question = question
-        //                     answer.value = a.value
-        //                     answerSave.push(answer)
-        //                 })
-        //                 q.rightAnswers.forEach(r => {
-        //                     let rightAnswer = new RightAnswer()
-        //                     rightAnswer.question = question
-        //                     rightAnswer.value = r.value
-        //                     rightAnswerSave.push(rightAnswer)
-        //                 })
-        //             })
-        //         }
-        //         else {
-        //             try {
-                        
-                    
-        //                 const stageAction = new Stage_Action()
-        //                 if(stage.type === "QR") {
-        //                     stageAction.to = (<StageActionQrDto>(s as unknown)).to
-        //                 }
-        //                 else if(stage.type === "Видео") {
-        //                     stageAction.url = (<StageActionMediaDto>(s as unknown)).url
-        //                 }
-        //                 else if(stage.type === "Карта") {
-        //                     stageAction.lat = (<StageActionMapDto>(s as unknown)).lat
-        //                     stageAction.long = (<StageActionMapDto>(s as unknown)).long
-        //                 }
-        //                 else {
-        //                     stageAction.text = (<StageActionTextDto>(s as unknown)).text
-        //                 }
-        //                 stageActionRep.save(stageAction)
-        //             }
-        //             catch(e) {
-        //                 console.log(e);
-                        
-        //             }
-                    
-        //         }
-
-        //         rightAnswerSave.forEach(e => {
-        //            rightAnswerRep.save(e)
-        //         })
-
-        //         answerSave.forEach(e => {
-        //             answerRep.save(e)
-        //         })
-        //         questionSave.forEach(e => {
-        //             questionRep.save(e)
-        //         })
-        //         stagesTestSave.forEach(e => {
-        //             stageTestRep.save(e)
-        //         })
-        //         stagesSave.forEach(e => {
-        //             stageRep.save(e)
-        //         })
-        //     })
-        //     // console.log(stages[2].questions);
-            
-        //      return resQuestSave;
-        // });
     }
    
 
@@ -274,16 +173,35 @@ export class QuestService {
 
     }
 
-    // public static async get(username: string): Promise<User> {
-    //     const rep = AppDataSource.getRepository(User);
-    //     return await rep.findOneBy({ username })
-    // }
+    public static async updateImagePath(id: number, path: string): Promise<Quest> {
+        const questRep = AppDataSource.getRepository(Quest);
+        // const userRep = AppDataSource.getRepository(User);
+        // const questUserRep = AppDataSource.getRepository(Quest_User);
 
+        const quest = await questRep.findOneBy({id:id})
+        if(!quest) {
+            throw new NotFoundError('Квест');
+        }
+        quest.image = path
+        return await questRep.save(quest)
 
-    // public static async getPureSql(...ids: string[]): Promise<Author[]> {
-    //     const rep = getManager().getRepository(Author);
-    //     if (ids.length === 0)
-    //         return await rep.query('select * from Author')
-    //     return await rep.query('select * from Author where 1=0 or ' + ids.map(id => `"id"='${id}'`).join(' or '))
-    // }
+    }
+    public static async getQuest( id: number): Promise<any> {
+         
+         AppDataSource.createQueryBuilder
+        return catchOrmErrors(async () => {
+            
+            const quest = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
+            .leftJoinAndSelect("quest.stages", "stage")
+            .where("quest.id = :id", {id: id})
+            .leftJoinAndSelect("stage.stageAction", "stage_action")
+            .leftJoinAndSelect("stage.stageTest", "stage_test")
+            .leftJoinAndSelect("stage_test.question", "question")
+            .leftJoinAndSelect("question.answer", "answer")
+            .leftJoinAndSelect("question.rightAnswer", "right_answer")
+            .getOne()
+
+            return quest
+        });
+    }
 }

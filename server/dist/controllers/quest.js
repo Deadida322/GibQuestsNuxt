@@ -36,29 +36,42 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.create = void 0;
+exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
 var utils_1 = require("./utils");
-var QuestDto_1 = require("./dto/QuestDto");
+var dto_1 = require("./dto");
 var quest_1 = require("../service/quest");
-// export async function get(request: Request, response: Response) {
-//     if (!request.query.username) {
-//         response.json(error('Введите query параметр username'))
-//         return;
-//     }
-//     const username = request.query.username as string
-//     const res = await UserService.get(username)
-//     res ? response.json(ok(res)) : response.json(error('Не существует пользователя с данным username'))  
-// }
+var fs = require("fs");
+var path = require("path");
+function getQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.id) {
+                        response.json((0, utils_1.error)('Введите query параметр id'));
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.getQuest(+request.query.id)];
+                case 1:
+                    res = _a.sent();
+                    res ? response.json((0, utils_1.ok)(res)) : response.json((0, utils_1.error)('Не существует квеста с данным id'));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getQuest = getQuest;
 function create(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var quest, errors, res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    quest = (0, class_transformer_1.plainToClass)(QuestDto_1.QuestDto, request.body);
+                    quest = (0, class_transformer_1.plainToClass)(dto_1.QuestDto, request.body);
                     return [4 /*yield*/, (0, class_validator_1.validate)(quest, { skipMissingProperties: true })];
                 case 1:
                     errors = _a.sent();
@@ -75,6 +88,97 @@ function create(request, response) {
     });
 }
 exports.create = create;
+function processQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var processQuestDto, errors, res, e_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    processQuestDto = (0, class_transformer_1.plainToClass)(dto_1.ProcessQustDto, request.body);
+                    return [4 /*yield*/, (0, class_validator_1.validate)(processQuestDto, { skipMissingProperties: true })];
+                case 1:
+                    errors = _a.sent();
+                    if (errors.length) {
+                        throw new error_1.ArgumentError();
+                    }
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
+                    return [4 /*yield*/, quest_1.QuestService.process(processQuestDto.userId, processQuestDto.questId, processQuestDto.progress ? processQuestDto.progress : null)];
+                case 3:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 5];
+                case 4:
+                    e_1 = _a.sent();
+                    response.json((0, utils_1.error)(e_1.message));
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.processQuest = processQuest;
+function trackQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, e_2;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.userId || !request.query.questId) {
+                        response.json((0, utils_1.error)('Введите query параметр userId и questId'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, quest_1.QuestService.track(+request.query.userId, +request.query.questId)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_2 = _a.sent();
+                    response.json((0, utils_1.error)(e_2.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.trackQuest = trackQuest;
+function updateImage(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var documentFile, pathImage, res, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.id) {
+                        response.json((0, utils_1.error)('Введите query параметр id квеста'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    documentFile = request.files;
+                    pathImage = path.join(__dirname, '../images', documentFile.image.name);
+                    fs.writeFileSync(pathImage, documentFile.image.data);
+                    if (!fs.existsSync(pathImage)) {
+                        response.json((0, utils_1.error)('Ошибка при сохранении изображения'));
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathImage)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_3 = _a.sent();
+                    response.json((0, utils_1.error)(e_3.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.updateImage = updateImage;
 // export async function getPureSql(request: Request, response: Response) {
 //     if (!request.query.id) {
 //         response.json(ok(await AuthorService.getPureSql()))

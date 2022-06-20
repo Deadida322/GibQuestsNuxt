@@ -43,11 +43,11 @@ var Quest = /** @class */ (function () {
         __metadata("design:type", String)
     ], Quest.prototype, "image", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Quest_User_1.Quest_User; }, function (quest_User) { return quest_User.quest; }, { cascade: ["update", "remove"] }),
+        (0, typeorm_1.OneToMany)(function () { return Quest_User_1.Quest_User; }, function (quest_User) { return quest_User.quest; }, { cascade: true }),
         __metadata("design:type", Array)
     ], Quest.prototype, "quest_user", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Stage_1.Stage; }, function (stage) { return stage.quest; }, { cascade: ["update", "remove"] }),
+        (0, typeorm_1.OneToMany)(function () { return Stage_1.Stage; }, function (stage) { return stage.quest; }, { cascade: true }),
         __metadata("design:type", Array)
     ], Quest.prototype, "stages", void 0);
     __decorate([

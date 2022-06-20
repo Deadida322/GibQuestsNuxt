@@ -38,20 +38,33 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 var data_source_1 = require("./data-source");
 require("reflect-metadata");
-// import { createConnection } from "typeorm";
-var bodyParser = require("body-parser");
 var express = require("express");
 var routes_1 = require("./routes");
 // import { accessLog, errorRequestHandler } from "./middleware";
 // import { config } from "./entity";
 var config = require("config");
+var fileUpload = require("express-fileupload");
 var port = config.get("port");
 data_source_1.AppDataSource.initialize().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     var app;
     return __generator(this, function (_a) {
         app = express();
-        app.use(bodyParser.json());
-        app.use(bodyParser.urlencoded({ extended: true }));
+        // app.use(bodyParser.json());
+        // app.use(bodyParser.urlencoded({ extended: true }));
+        app.use(express.json());
+        app.use(express.urlencoded({ extended: true }));
+        app.use(fileUpload());
+        // const options = {
+        //     uploadDir: os.tmpdir(),
+        //     autoClean: true
+        //   };
+        // app.use(formData.parse(options));
+        // // delete from the request all empty files (size == 0)
+        // app.use(formData.format());
+        // // change the file objects to fs.ReadStream 
+        // app.use(formData.stream());
+        // // union the body and the files
+        // app.use(formData.union());
         // app.use(accessLog)
         // register all application routes
         (0, routes_1.initRoutes)(app);

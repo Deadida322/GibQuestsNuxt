@@ -30,6 +30,31 @@ var AppRoutes = [
         method: "post",
         action: controllers_1.user.register
     },
+    {
+        path: "/auth",
+        method: "post",
+        action: controllers_1.user.auth
+    },
+    {
+        path: "/processQuest",
+        method: "post",
+        action: controllers_1.quest.processQuest
+    },
+    {
+        path: "/trackQuest",
+        method: "get",
+        action: controllers_1.quest.trackQuest
+    },
+    {
+        path: "/updateImage",
+        method: "post",
+        action: controllers_1.quest.updateImage
+    },
+    {
+        path: "/getQuest",
+        method: "get",
+        action: controllers_1.quest.getQuest
+    },
     // {
     //     path: "/author/pure",
     //     method: "get",

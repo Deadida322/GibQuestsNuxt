@@ -9,37 +9,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserDto = void 0;
+exports.ProcessQustDto = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
-var UserDto = /** @class */ (function () {
-    function UserDto() {
+var ProcessQustDto = /** @class */ (function () {
+    function ProcessQustDto() {
     }
     __decorate([
         (0, class_validator_1.IsDefined)(),
         (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], UserDto.prototype, "name", void 0);
+        __metadata("design:type", Number)
+    ], ProcessQustDto.prototype, "userId", void 0);
     __decorate([
         (0, class_validator_1.IsDefined)(),
         (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], UserDto.prototype, "surname", void 0);
-    __decorate([
-        (0, class_validator_1.IsDefined)(),
-        (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], UserDto.prototype, "username", void 0);
-    __decorate([
-        (0, class_validator_1.IsDefined)(),
-        (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], UserDto.prototype, "password", void 0);
+        __metadata("design:type", Number)
+    ], ProcessQustDto.prototype, "questId", void 0);
     __decorate([
         (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], UserDto.prototype, "token", void 0);
-    return UserDto;
+        __metadata("design:type", Number)
+    ], ProcessQustDto.prototype, "progress", void 0);
+    return ProcessQustDto;
 }());
-exports.UserDto = UserDto;
-//# sourceMappingURL=UserDto.js.map
+exports.ProcessQustDto = ProcessQustDto;
+//# sourceMappingURL=ProcessQustDto.js.map

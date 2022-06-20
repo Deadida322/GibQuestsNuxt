@@ -15,7 +15,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UnexpectedDBError = exports.NotFoundError = exports.AlreadyExistsError = exports.ArgumentError = exports.ProtocolError = void 0;
+exports.UnexpectedDBError = exports.UnexpectedError = exports.NotFoundError = exports.AlreadyExistsError = exports.ArgumentError = exports.ProtocolError = void 0;
 var ProtocolError = /** @class */ (function (_super) {
     __extends(ProtocolError, _super);
     function ProtocolError(message, innerError) {
@@ -39,7 +39,7 @@ exports.ArgumentError = ArgumentError;
 var AlreadyExistsError = /** @class */ (function (_super) {
     __extends(AlreadyExistsError, _super);
     function AlreadyExistsError() {
-        return _super.call(this, 'already exists') || this;
+        return _super.call(this, 'Такая запись уже есть') || this;
     }
     return AlreadyExistsError;
 }(ProtocolError));
@@ -48,11 +48,20 @@ var NotFoundError = /** @class */ (function (_super) {
     __extends(NotFoundError, _super);
     function NotFoundError(entity) {
         if (entity === void 0) { entity = ''; }
-        return _super.call(this, entity ? "".concat(entity, " is not found") : 'not found') || this;
+        return _super.call(this, entity ? "".concat(entity, " \u043D\u0435 \u043D\u0430\u0439\u0434\u0435\u043D\u043E") : 'не найдено') || this;
     }
     return NotFoundError;
 }(ProtocolError));
 exports.NotFoundError = NotFoundError;
+var UnexpectedError = /** @class */ (function (_super) {
+    __extends(UnexpectedError, _super);
+    function UnexpectedError(entity) {
+        if (entity === void 0) { entity = ''; }
+        return _super.call(this, "\u041D\u0435\u043F\u0440\u0435\u0434\u0432\u0438\u0434\u0435\u043D\u043D\u0430\u044F \u043E\u0448\u0438\u0431\u043A\u0430: ".concat(entity)) || this;
+    }
+    return UnexpectedError;
+}(ProtocolError));
+exports.UnexpectedError = UnexpectedError;
 var UnexpectedDBError = /** @class */ (function (_super) {
     __extends(UnexpectedDBError, _super);
     function UnexpectedDBError() {

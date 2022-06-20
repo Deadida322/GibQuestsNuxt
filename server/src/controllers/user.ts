@@ -41,8 +41,6 @@ export async function register(request: Request, response: Response) {
         const res = await UserService.add(user.name, user.password, user.surname, user.username)
         var token = await createToken(user)    
         res.token = token
-        // var logToken = jwt.verify(token, secret)
-        // jwt.decode(token, secret,).exp
         response.json(ok(res));
     }
     catch(e) {
@@ -80,32 +78,3 @@ export async function auth(request: Request, response: Response) {
           });
     }
 }
-// jwt.verify(token, 'shhhhh', function(err, decoded) {
-//     if (err) {
-//       /*
-//         err = {
-//           name: 'TokenExpiredError',
-//           message: 'jwt expired',
-//           expiredAt: 1408621000
-//         }
-//       */
-//     }
-//   });
-
-// export async function create(request: Request, response: Response) {
-//     const user = plainToClass(AuthorDto, request.body);
-//     const errors = await validate(user, { skipMissingProperties: true });
-//     if (errors.length) {
-//         throw new ArgumentError();
-//     }
-//     response.json(ok(await AuthorService.add(user.name, user.born, user.died)));
-// }
-
-// export async function getPureSql(request: Request, response: Response) {
-//     if (!request.query.id) {
-//         response.json(ok(await AuthorService.getPureSql()))
-//         return;
-//     }
-//     const id = request.query.id as string
-//     response.json(ok(await AuthorService.getPureSql(id)));
-// }
