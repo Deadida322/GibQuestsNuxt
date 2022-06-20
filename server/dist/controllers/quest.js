@@ -65,8 +65,6 @@ function create(request, response) {
                     if (errors.length) {
                         throw new error_1.ArgumentError();
                     }
-                    // console.log(quest);
-                    console.log('addd');
                     return [4 /*yield*/, quest_1.QuestService.add(quest.title, quest.description, quest.image, quest.stages, quest.author.username)];
                 case 2:
                     res = _a.sent();

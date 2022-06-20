@@ -1,5 +1,5 @@
 import { Expose, Type} from "class-transformer";
-import { IsDefined, Matches, IsOptional } from "class-validator";
+import { IsDefined, Matches, IsOptional, IsHash } from "class-validator";
 
 export class UserDto {
     id: number
@@ -18,5 +18,8 @@ export class UserDto {
     @IsDefined()
     @Expose()
     password: string;
+
+    @Expose()
+    token: string
 
 }

@@ -38,16 +38,31 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 var User_1 = require("../entity/User");
+var utils_1 = require("./utils");
 var data_source_1 = require("../data-source");
 var UserService = /** @class */ (function () {
     function UserService() {
     }
-    // public static async add(name: string, born: number, died?: number): Promise<User> {
-    //     const rep = getManager().getRepository(Author);
-    //     return catchOrmErrors(async () => {
-    //         return await rep.save({ name, born, died });
-    //     });
-    // }
+    UserService.add = function (name, password, surname, username) {
+        return __awaiter(this, void 0, void 0, function () {
+            var userRep;
+            var _this = this;
+            return __generator(this, function (_a) {
+                userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var oldUser;
+                        return __generator(this, function (_a) {
+                            oldUser = userRep.findOneBy({ username: username });
+                            console.log(oldUser);
+                            // if(ol)
+                            // const user = new User()
+                            // return await userRep.save(user); 
+                            return [2 /*return*/, null];
+                        });
+                    }); })];
+            });
+        });
+    };
     // public static async edit(id: string, data: { name?: string, born?: number, died?: number }): Promise<Author> {
     //     const rep = getManager().getRepository(Author);
     //     let author = await rep.findOne(id);

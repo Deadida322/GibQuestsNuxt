@@ -1,13 +1,17 @@
 import { Expose, Type } from "class-transformer";
 import { IsDefined, Matches, IsOptional } from "class-validator";
 
-
-export abstract class RightAnswerDto {
-    id: number
+export class ProcessQustDto {
 
     @IsDefined()
     @Expose()
-    value: string;
+    userId: number;
+
+    @IsDefined()
+    @Expose()
+    questId: number;
+
+    @Expose()
+    progress: number;
 
 }
- 

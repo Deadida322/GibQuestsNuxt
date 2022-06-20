@@ -1,16 +1,33 @@
 import { User } from "../entity/User";
-import { NotFoundError } from "../error";
+import { NotFoundError, AlreadyExistsError } from "../error";
 import { catchOrmErrors } from "./utils";
 import { AppDataSource } from "../data-source"
 
 
+
 export class UserService {
-    // public static async add(name: string, born: number, died?: number): Promise<User> {
-    //     const rep = getManager().getRepository(Author);
-    //     return catchOrmErrors(async () => {
-    //         return await rep.save({ name, born, died });
-    //     });
-    // }
+    public static async add(name: string, password: string, surname: string, username: string): Promise<any> {
+        const userRep = AppDataSource.getRepository(User);
+        return catchOrmErrors(async () => {
+            const oldUser = await userRep.findOneBy({username})
+            if(oldUser) {
+                throw new AlreadyExistsError();
+            }
+            const user = new User()
+            user.name = name;
+            user.surname = surname;
+            user.password = password
+            user.username = username
+            return await userRep.save(user); 
+        });
+    }
+
+    public static async getUser( username: string, password: string): Promise<any> {
+        const userRep = AppDataSource.getRepository(User);
+        return catchOrmErrors(async () => {
+            return await userRep.findOneBy({ username, password })
+        });
+    }
 
     // public static async edit(id: string, data: { name?: string, born?: number, died?: number }): Promise<Author> {
     //     const rep = getManager().getRepository(Author);

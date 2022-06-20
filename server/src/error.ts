@@ -15,7 +15,7 @@ export class ArgumentError extends ProtocolError {
 export class AlreadyExistsError extends ProtocolError {
 
     public constructor() {
-        super('already exists');
+        super('Такая запись уже есть');
     }
 
 }
@@ -23,11 +23,17 @@ export class AlreadyExistsError extends ProtocolError {
 export class NotFoundError extends ProtocolError {
 
     public constructor(entity: string = '') {
-        super(entity ? `${entity} is not found` : 'not found');
+        super(entity ? `${entity} не найдено` : 'не найдено');
     }
 
 }
+export class UnexpectedError extends ProtocolError {
 
+    public constructor(entity: string = '') {
+        super(`Непредвиденная ошибка: ${entity}`);
+    }
+
+}
 export class UnexpectedDBError extends ProtocolError {
 
     public constructor() {

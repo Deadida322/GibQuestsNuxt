@@ -89,14 +89,6 @@ function saveQuestion(q, stageTest) {
 var QuestService = /** @class */ (function () {
     function QuestService() {
     }
-    // private static getTypeAction(type) {
-    //     //['Видео', 'Текст', 'Карта', 'Тест', 'QR']
-    //     switch(type) {
-    //         case (StageEnumArray[0]):
-    //             return:     
-    //         break;
-    //     }
-    // }
     QuestService.add = function (title, description, image, stages, username) {
         return __awaiter(this, void 0, void 0, function () {
             var questRep, stageRep, userRep, stageTestRep, stageActionRep, questionRep, answerRep, rightAnswerRep;
@@ -166,7 +158,7 @@ var QuestService = /** @class */ (function () {
                                                             else {
                                                                 stageAction.text = s.text;
                                                             }
-                                                            console.log('stage', stage);
+                                                            // console.log('stage',stage);
                                                             stageAction.stage = stage;
                                                             return [4 /*yield*/, stageActionRep.save(stageAction)];
                                                         case 5:

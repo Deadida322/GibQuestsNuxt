@@ -25,12 +25,26 @@ const AppRoutes: Route[] = [
     action: quest.create
   },
 
-
-    // {
-    //     path: "/author",
-    //     method: "get",
-    //     action: author.get
-    // },
+  {
+      path: "/register",
+      method: "post",
+      action: user.register
+  },
+  {
+    path: "/auth",
+    method: "post",
+    action: user.auth
+  },
+  {
+    path: "/processQuest",
+    method: "post",
+    action: quest.processQuest
+  },
+  {
+    path: "/trackQuest",
+    method: "get",
+    action: quest.trackQuest
+  },
     // {
     //     path: "/author/pure",
     //     method: "get",

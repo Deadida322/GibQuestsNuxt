@@ -36,7 +36,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.get = void 0;
+exports.register = exports.get = void 0;
+var class_transformer_1 = require("class-transformer");
+var class_validator_1 = require("class-validator");
+var dto_1 = require("./dto");
+var error_1 = require("../error");
 var user_1 = require("../service/user");
 var utils_1 = require("./utils");
 function get(request, response) {
@@ -60,6 +64,29 @@ function get(request, response) {
     });
 }
 exports.get = get;
+function register(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var user, errors, res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    user = (0, class_transformer_1.plainToClass)(dto_1.UserDto, request.body);
+                    return [4 /*yield*/, (0, class_validator_1.validate)(user, { skipMissingProperties: true })];
+                case 1:
+                    errors = _a.sent();
+                    if (errors.length) {
+                        throw new error_1.ArgumentError();
+                    }
+                    return [4 /*yield*/, user_1.UserService.add(user.name, user.password, user.surname, user.username)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.register = register;
 // export async function create(request: Request, response: Response) {
 //     const user = plainToClass(AuthorDto, request.body);
 //     const errors = await validate(user, { skipMissingProperties: true });

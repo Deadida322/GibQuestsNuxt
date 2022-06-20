@@ -1,24 +1,19 @@
 import { Quest } from '../entity/Quest';
 import { User } from "../entity/User";
-import { NotFoundError } from "../error";
+import { NotFoundError, UnexpectedError } from "../error";
 import { catchOrmErrors } from "./utils";
 import { AppDataSource } from "../data-source"
 import { Stage, StageEnumArray} from '../entity/Stage';
-import { StageDto } from '../controllers/dto/StageDto';
+import { StageDto, QuestionDto } from '../controllers/dto';
 import { StageActionMapDto, StageActionMediaDto, StageActionQrDto, StageActionTextDto } from '../controllers/dto/StageActionDto';
 import { Stage_Test } from '../entity/Stage_Test';
 import { Question } from '../entity/Question';
 import { Answer } from '../entity/Answer';
 import { RightAnswer } from '../entity/RightAnswer';
 import { Stage_Action } from '../entity/Stage_Action';
-import { QuestionDto } from '../controllers/dto/QuestionDto';
+import { Quest_User } from '../entity/Quest_User';
 
 async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
-    const questRep = AppDataSource.getRepository(Quest);
-    const stageRep = AppDataSource.getRepository(Stage);
-    const userRep = AppDataSource.getRepository(User);
-    const stageTestRep = AppDataSource.getRepository(Stage_Test);
-    const stageActionRep = AppDataSource.getRepository(Stage_Action);
     const questionRep = AppDataSource.getRepository(Question);
     const answerRep = AppDataSource.getRepository(Answer);
     const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
@@ -45,14 +40,6 @@ async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
 }
 
 export class QuestService {
-    // private static getTypeAction(type) {
-    //     //['Видео', 'Текст', 'Карта', 'Тест', 'QR']
-    //     switch(type) {
-    //         case (StageEnumArray[0]):
-    //             return:     
-    //         break;
-    //     }
-    // }
     public static async add(title: string, description: string, image: string, stages: StageDto[], username: string): Promise<Quest> {
         const questRep = AppDataSource.getRepository(Quest);
         const stageRep = AppDataSource.getRepository(Stage);
@@ -238,23 +225,54 @@ export class QuestService {
     }
    
 
+    public static async process(userId: number, questId: number, progress?: number): Promise<Quest_User> {
+        const questRep = AppDataSource.getRepository(Quest);
+        const userRep = AppDataSource.getRepository(User);
+        const questUserRep = AppDataSource.getRepository(Quest_User);
 
+        const user = await userRep.findOneBy({id:userId})
+        const quest = await questRep.findOneBy({id:questId})
+        if(!user || !quest) {
+            throw new NotFoundError('Пользователь или квест');
+        }
+        let questUser = await questUserRep.findOneBy({user, quest})
+        
+        if(!progress && !questUser) {
+            let newQuestUser = new Quest_User()
+            newQuestUser.progress = 1
+            newQuestUser.quest = quest
+            newQuestUser.user = user
+            return await questUserRep.save(newQuestUser)
+        }
+        else if(progress && !questUser) {
+            throw new NotFoundError('Прохождение квеста для пользователя');
+        }
+        else if(progress && questUser) {
+            if(progress <= questUser.progress) {
+                throw new UnexpectedError('Этап квеста меньше или равен текущему')
+            }
+            if(progress - 1 !== questUser.progress) {
+                throw new UnexpectedError('Новый этап квеста больше чем на 1, чем текущий этап')
+            }
+            questUser.progress = progress
+            return await questUserRep.save(questUser)
+        }
 
+    }
 
+    public static async track(userId: number, questId: number): Promise<Quest_User[]> {
+        const questRep = AppDataSource.getRepository(Quest);
+        const userRep = AppDataSource.getRepository(User);
+        const questUserRep = AppDataSource.getRepository(Quest_User);
 
-    // public static async edit(id: string, data: { name?: string, born?: number, died?: number }): Promise<Author> {
-    //     const rep = getManager().getRepository(Author);
-    //     let author = await rep.findOne(id);
-    //     if (!author) throw new NotFoundError('author');
-    //     const { name, born, died } = data;
-    //     author = {
-    //         ...author,
-    //         ...name && { name },
-    //         ...born && { born },
-    //         ...died && { died },
-    //     }
-    //     return await rep.save(author);
-    // }
+        const author = await userRep.findOneBy({id:userId})
+        const quest = await questRep.findOneBy({id:questId, author: author})
+        if(!author || !quest) {
+            throw new NotFoundError('Автор или квест автора');
+        }
+        return await questUserRep.findBy({quest})
+
+    }
 
     // public static async get(username: string): Promise<User> {
     //     const rep = AppDataSource.getRepository(User);

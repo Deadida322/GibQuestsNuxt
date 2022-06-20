@@ -1,3 +1,5 @@
 {
-    "port": 8000
+    "port": 8000,
+    "secret": "timovey ehe best",
+    "durationSecret": "1h"
 }

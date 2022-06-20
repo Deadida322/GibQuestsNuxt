@@ -25,11 +25,11 @@ var AppRoutes = [
         method: "post",
         action: controllers_1.quest.create
     },
-    // {
-    //     path: "/author",
-    //     method: "get",
-    //     action: author.get
-    // },
+    {
+        path: "/register",
+        method: "post",
+        action: controllers_1.user.register
+    },
     // {
     //     path: "/author/pure",
     //     method: "get",
