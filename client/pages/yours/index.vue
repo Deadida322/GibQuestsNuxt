@@ -4,7 +4,13 @@
         <v-main class="pa-2 mt-4">
             <Search :placeholder="'Найти среди своих'" @search="search"/>
             <Quest edit v-for="(item, key) in createdQuests" :key="key" :item="item"/>
-            <Add @click="createNew" class="mt-5"/>
+            <Add @click="createNew" class="mt-5"><v-list>
+                <v-list-item-group>
+                        <v-list-item @click="createNew" color="primary">
+                            <v-list-item-title>Новый квест</v-list-item-title>
+                        </v-list-item>
+                    </v-list-item-group>
+                </v-list></Add>
         </v-main>
     </div>
 </template>

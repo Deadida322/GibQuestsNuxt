@@ -4,7 +4,7 @@
         <v-main class="pa-2 mt-4">
             <v-row class="my-3 d-flex justify-space-between text-center align-center">
                 <v-col no-gutters class="col col-2">
-                    <v-icon @click="$router.go(-1)" large>
+                    <v-icon @click="$router.push('/yours')" large>
                         mdi-arrow-left
                     </v-icon>
                 </v-col>
@@ -163,57 +163,56 @@ export default {
             console.log(e)
         },
         stageChange(e, idx){
-            console.log('stegeChange')
             this.myStagesErrors
             this.quest.stages[idx] = e
         },
         setImage(e){
             this.quest.image = e
             let reader = new FileReader();
-            console.log(e)
             reader.readAsDataURL(e);
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
         },
         createTest(id){
-            this.$store.commit('create/setCurrentStage', this.quest.stages[id])
+            this.$store.commit('create/setCurrentStage', JSON.parse(JSON.stringify(this.quest.stages[id])))
             this.$router.push(`/create/test/${id}`)
         },
         createText(id){
-            this.$store.commit('create/setCurrentStage', this.quest.stages[id])
+            this.$store.commit('create/setCurrentStage', JSON.parse(JSON.stringify(this.quest.stages[id])))
             this.$router.push(`/create/text/${id}`)
         },
         createMap(id){
-            this.$store.commit('create/setCurrentStage', this.quest.stages[id])
+            this.$store.commit('create/setCurrentStage', JSON.parse(JSON.stringify(this.quest.stages[id])))
             this.$router.push(`/create/map/${id}`)
         },
         createQR(id){
-            this.$store.commit('create/setCurrentStage', this.quest.stages[id])
+            this.$store.commit('create/setCurrentStage',JSON.parse(JSON.stringify(this.quest.stages[id])))
             this.$router.push(`/create/QR/${id}`)
         },
         addStage(type){
+            console.log(this.quest.stages)
             this.$v.quest.stages.$touch()
             let toPush =  {
-                title: `Этап ${this.quest.stages.length+1}`,
+                name: `Этап ${this.quest.stages.length+1}`,
                 type,
             }
-            if(type=='Видео') toPush.url = 'https://youtube.com/watch?v=' 
+            if(type=='Видео') toPush.url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' 
             this.quest.stages.push(toPush)
+            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
             this.$store.commit('create/setCurrentStage', toPush)
         },
         removeStage(idx){
             this.quest.stages.splice(idx, 1)
+            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
         },
         shuffleComplete(stages){
             this.key++
-            console.log('shuffle')
-            this.quest.stages=stages
+            this.quest.stages=JSON.parse(JSON.stringify(stages))
         },
         setQuest(){
             this.$v.quest.$touch()
             if(!this.$v.quest.$anyError && this.summaryStagesErrors){
-                console.log(this.quest)
             }
         }
     },
@@ -255,7 +254,6 @@ export default {
             const errors = []
             if (!this.$v.quest.stages.$dirty) return errors
             for(let i in this.quest.stages){
-                console.log(this.quest.stages[i].name)
                 if(!this.quest.stages[i].name) errors[i]=true
                 if(this.quest.stages[i].type=='Текст'){
                     if(!this.quest.stages[i].text) errors[i]=true

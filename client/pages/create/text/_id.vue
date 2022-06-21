@@ -66,7 +66,7 @@ export default {
             this.$v.stage.$touch()
             if(this.$v.stage.$anyError) return
             this.quest.stages[this.id] = this.stage
-            console.log(this.quest)
+            console.log(this.stage)
             this.$store.commit('create/setCurrentQuest', this.quest)
             this.snackbar = true
         }

@@ -99,6 +99,6 @@ export const mutations = {
 }
 
 export const getters = {
-    getCurrentStage: s => s.currentStage,
-    getCurrentQuest: s => s.currentQuest
+    getCurrentStage: s => JSON.parse(JSON.stringify(s.currentStage)),
+    getCurrentQuest: s => JSON.parse(JSON.stringify(s.currentQuest))
 }

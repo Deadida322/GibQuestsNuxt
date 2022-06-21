@@ -27,10 +27,7 @@
 <script>
 export default {
     created(){
-        console.log(
-            'stage'
-        )
-        this.stage = this.item
+        this.stage = {...this.item}
     },
     data(){
         return{

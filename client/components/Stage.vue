@@ -5,7 +5,7 @@
                 {{idx+1}}
             </v-btn>
             <div class="ml-4 text-body-1">
-                {{stage.title || stage.name}}
+                {{stage.name || stage.title}}
             </div>
         </v-card-text>
     </v-card>
