@@ -61,14 +61,14 @@ const AppRoutes: Route[] = [
     action: quest.getQuests
   },
   {
+    path: "/getCreatedQuests",
+    method: "get",
+    action: quest.getCreatedQuests
+  },
+  {
     path: "/getImage",
     method: "get",
     action: quest.getImage
-  },
-  {
-    path: "/qr",
-    method: "get",
-    action: quest.createQrTest
   },
   
    
