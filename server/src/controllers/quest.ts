@@ -76,6 +76,22 @@ export async function processQuest(request: Request, response: Response) {
     }
    
 }
+export async function getProcessQuest(request: Request, response: Response) {
+    if(!request.query.userId) {
+        response.json(error('Введите query параметр userId'))
+    }
+    if(!request.query.questId) {
+        response.json(error('Введите query параметр questId'))
+    }
+    try {
+        const res = await QuestService.getProcess(+request.query.userId,+request.query.questId)
+        response.json(ok(res));
+    }
+    catch(e) {
+        response.json(error(e.message));
+    }
+   
+}
 export async function trackQuest(request: Request, response: Response) {
     if(!request.query.userId || !request.query.questId) {
         response.json(error('Введите query параметр userId и questId'))
