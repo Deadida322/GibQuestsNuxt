@@ -61,6 +61,11 @@ const AppRoutes: Route[] = [
     action: quest.getQuests
   },
   {
+    path: "/deleteQuest",
+    method: "delete",
+    action: quest.deleteQuest
+  },
+  {
     path: "/getCreatedQuests",
     method: "get",
     action: quest.getCreatedQuests

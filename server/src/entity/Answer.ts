@@ -13,7 +13,7 @@ export class Answer {
     })
     value: string
 
-    @ManyToOne(() => Question, (question) => question.answer)
+    @ManyToOne(() => Question, (question) => question.answer, {onDelete: "CASCADE"})
     question: Question
 
 }

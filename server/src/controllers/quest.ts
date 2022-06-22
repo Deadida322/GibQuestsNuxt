@@ -47,6 +47,20 @@ export async function create(request: Request, response: Response) {
     response.json(ok(res));
 }
 
+export async function deleteQuest(request: Request, response: Response) {
+    if(!request.query.id) {
+        response.json(error('Введите query параметр id квеста'))
+    }
+    try {   
+        const res = await QuestService.deleteQuest(+request.query.id)
+        response.json(ok(res));
+    }
+    catch(e) {
+        response.json(error(e.message));
+    }
+   
+}
+
 export async function processQuest(request: Request, response: Response) {
     const processQuestDto = plainToClass(ProcessQustDto, request.body);
     const errors = await validate(processQuestDto, { skipMissingProperties: true });
@@ -90,10 +104,13 @@ export async function updateImage(request: Request, response: Response) {
             response.json(error('Ошибка при сохранении изображения'))
         }
         const oldQuest = await QuestService.getQuest(+request.query.id)
-        const parsePath = oldQuest.image.split('/')
-        const oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1])
-        if(fs.existsSync(oldPath)) {
-           fs.unlinkSync(oldPath)
+        if(oldQuest.image) {
+            const parsePath = oldQuest.image.split('/')
+            const oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1])
+        
+            if(fs.existsSync(oldPath)) {
+            fs.unlinkSync(oldPath)
+            }
         } 
         let pathToClient = `${config.get('protocol')}://${getBaseUrl()}:${config.get('port')}/img/${hash}.png`    
         const res = await QuestService.updateImagePath(+request.query.id, pathToClient)
@@ -119,6 +136,7 @@ export async function getImage(request: Request, response: Response) {
     }
    
 }
+
 
 export async function getQR(request: Request, response: Response) {
     if(!request.query.word) {

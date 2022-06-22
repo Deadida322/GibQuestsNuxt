@@ -243,6 +243,16 @@ export class QuestService {
         });
 
     }
+
+    public static async deleteQuest(id: number): Promise<any> {
+        const questRep = AppDataSource.getRepository(Quest);
+        // const userRep = AppDataSource.getRepository(User);
+        // const questUserRep = AppDataSource.getRepository(Quest_User);
+        
+        return await questRep.delete(id)
+
+    }
+
     public static async getQR( word: string): Promise<string> {
         return new Promise((resolve,reject) => {
             QRCode.toDataURL(word, (err, src) => {
