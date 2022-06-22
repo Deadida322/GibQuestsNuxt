@@ -9,6 +9,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {getBaseUrl} from 'get-base-url';
 import * as crypto from 'crypto';
+import * as config from 'config';
 interface MulterRequest extends Request {
     files: any;
 }
@@ -83,12 +84,18 @@ export async function updateImage(request: Request, response: Response) {
     try {
         const documentFile  = (request as MulterRequest).files;
         var hash = await crypto.createHash('md5').update(Date.now().toString()).digest('hex');
-        const pathImage = path.join(__dirname, '../image', `${hash}.png`)
+        const pathImage = path.join(__dirname, '../images', `${hash}.png`)
         await fs.writeFileSync(pathImage,documentFile.image.data);
         if(!fs.existsSync(pathImage)) {
             response.json(error('Ошибка при сохранении изображения'))
         }
-        let pathToClient = path.join(getBaseUrl(), '../img', `${hash}.png`)
+        const oldQuest = await QuestService.getQuest(+request.query.id)
+        const parsePath = oldQuest.image.split('/')
+        const oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1])
+        if(fs.existsSync(oldPath)) {
+           fs.unlinkSync(oldPath)
+        } 
+        let pathToClient = `${config.get('protocol')}://${getBaseUrl()}:${config.get('port')}/img/${hash}.png`    
         const res = await QuestService.updateImagePath(+request.query.id, pathToClient)
         response.json(ok(res));
     }
