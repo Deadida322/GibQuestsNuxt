@@ -113,3 +113,16 @@ export async function getImage(request: Request, response: Response) {
    
 }
 
+export async function getQR(request: Request, response: Response) {
+    if(!request.query.word) {
+        response.json(error('Введите query параметр word квеста'))
+    }
+    try {  
+        const res = await QuestService.getQR(<string>request.query.word)
+        response.json(ok(res));
+    }
+    catch(e) {
+        response.json(error(e.message));
+    }
+   
+}
