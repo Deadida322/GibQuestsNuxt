@@ -86,9 +86,9 @@ function saveQuestion(q, stageTest) {
 var QuestService = /** @class */ (function () {
     function QuestService() {
     }
-    QuestService.add = function (title, description, image, stages, username) {
+    QuestService.add = function (title, description, stages, username) {
         return __awaiter(this, void 0, void 0, function () {
-            var questRep, stageRep, userRep, stageTestRep, stageActionRep, questionRep, answerRep, rightAnswerRep;
+            var questRep, stageRep, userRep, stageTestRep, stageActionRep;
             var _this = this;
             return __generator(this, function (_a) {
                 questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
@@ -96,9 +96,9 @@ var QuestService = /** @class */ (function () {
                 userRep = data_source_1.AppDataSource.getRepository(User_1.User);
                 stageTestRep = data_source_1.AppDataSource.getRepository(Stage_Test_1.Stage_Test);
                 stageActionRep = data_source_1.AppDataSource.getRepository(Stage_Action_1.Stage_Action);
-                questionRep = data_source_1.AppDataSource.getRepository(Question_1.Question);
-                answerRep = data_source_1.AppDataSource.getRepository(Answer_1.Answer);
-                rightAnswerRep = data_source_1.AppDataSource.getRepository(RightAnswer_1.RightAnswer);
+                // const questionRep = AppDataSource.getRepository(Question);
+                // const answerRep = AppDataSource.getRepository(Answer);
+                // const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
                 return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
                         var quest, author, resQuestSave;
                         return __generator(this, function (_a) {
@@ -107,7 +107,6 @@ var QuestService = /** @class */ (function () {
                                     quest = new Quest_1.Quest();
                                     quest.title = title;
                                     quest.description = description;
-                                    quest.image = image;
                                     return [4 /*yield*/, userRep.findOneBy({ username: username })];
                                 case 1:
                                     author = _a.sent();
@@ -165,12 +164,9 @@ var QuestService = /** @class */ (function () {
                                                     }
                                                 });
                                             });
-                                        })
-                                        // console.log(stages[2].questions);
-                                    ];
+                                        })];
                                 case 3:
                                     _a.sent();
-                                    // console.log(stages[2].questions);
                                     return [2 /*return*/, resQuestSave];
                             }
                         });
@@ -273,21 +269,47 @@ var QuestService = /** @class */ (function () {
         return __awaiter(this, void 0, void 0, function () {
             var _this = this;
             return __generator(this, function (_a) {
-                data_source_1.AppDataSource.createQueryBuilder;
                 return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
                         var quest;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Stage_1.Stage).createQueryBuilder('stage')
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Quest_1.Quest).createQueryBuilder('quest')
+                                        .leftJoinAndSelect("quest.stages", "stage")
+                                        .where("quest.id = :id", { id: id })
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
-                                        .where("stage_action.stageId = stage_action.id")
-                                        .getMany()];
+                                        .leftJoinAndSelect("stage.stageTest", "stage_test")
+                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("question.answer", "answer")
+                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        .getOne()];
                                 case 1:
                                     quest = _a.sent();
-                                    console.log(quest);
-                                    // .leftJoinAndSelect(Stage_Action, "stage_action", "stage_action.stageId = stage.id")
-                                    // .leftJoinAndSelect(Stage_Test, "stage_test", "stage_test.stageId = stage.id")
                                     return [2 /*return*/, quest];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    QuestService.getQuests = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var quests;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Quest_1.Quest).createQueryBuilder('quest')
+                                        .leftJoinAndSelect("quest.stages", "stage")
+                                        .leftJoinAndSelect("stage.stageAction", "stage_action")
+                                        .leftJoinAndSelect("stage.stageTest", "stage_test")
+                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("question.answer", "answer")
+                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        .getMany()];
+                                case 1:
+                                    quests = _a.sent();
+                                    return [2 /*return*/, quests];
                             }
                         });
                     }); })];

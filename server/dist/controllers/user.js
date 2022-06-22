@@ -118,8 +118,6 @@ function register(request, response) {
                 case 4:
                     token = _a.sent();
                     res.token = token;
-                    // var logToken = jwt.verify(token, secret)
-                    // jwt.decode(token, secret,).exp
                     response.json((0, utils_1.ok)(res));
                     return [3 /*break*/, 6];
                 case 5:
@@ -186,31 +184,4 @@ function auth(request, response) {
     });
 }
 exports.auth = auth;
-// jwt.verify(token, 'shhhhh', function(err, decoded) {
-//     if (err) {
-//       /*
-//         err = {
-//           name: 'TokenExpiredError',
-//           message: 'jwt expired',
-//           expiredAt: 1408621000
-//         }
-//       */
-//     }
-//   });
-// export async function create(request: Request, response: Response) {
-//     const user = plainToClass(AuthorDto, request.body);
-//     const errors = await validate(user, { skipMissingProperties: true });
-//     if (errors.length) {
-//         throw new ArgumentError();
-//     }
-//     response.json(ok(await AuthorService.add(user.name, user.born, user.died)));
-// }
-// export async function getPureSql(request: Request, response: Response) {
-//     if (!request.query.id) {
-//         response.json(ok(await AuthorService.getPureSql()))
-//         return;
-//     }
-//     const id = request.query.id as string
-//     response.json(ok(await AuthorService.getPureSql(id)));
-// }
 //# sourceMappingURL=user.js.map

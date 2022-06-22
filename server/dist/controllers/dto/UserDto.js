@@ -16,12 +16,10 @@ var UserDto = /** @class */ (function () {
     function UserDto() {
     }
     __decorate([
-        (0, class_validator_1.IsDefined)(),
         (0, class_transformer_1.Expose)(),
         __metadata("design:type", String)
     ], UserDto.prototype, "name", void 0);
     __decorate([
-        (0, class_validator_1.IsDefined)(),
         (0, class_transformer_1.Expose)(),
         __metadata("design:type", String)
     ], UserDto.prototype, "surname", void 0);

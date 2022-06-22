@@ -55,26 +55,16 @@ var AppRoutes = [
         method: "get",
         action: controllers_1.quest.getQuest
     },
-    // {
-    //     path: "/author/pure",
-    //     method: "get",
-    //     action: author.getPureSql
-    // },
-    // {
-    //     path: "/author",
-    //     method: "post",
-    //     action: author.create
-    // },
-    // {
-    //     path: "/ping",
-    //     method: "get",
-    //     action: system.ping
-    // },
-    // {
-    //     path: "/clear",
-    //     method: "get",
-    //     action: system.clearDb
-    // }
+    {
+        path: "/getImage",
+        method: "get",
+        action: controllers_1.quest.getImage
+    },
+    {
+        path: "/qr",
+        method: "get",
+        action: controllers_1.quest.createQrTest
+    },
 ];
 function initRoutes(app) {
     AppRoutes.forEach(function (route) {

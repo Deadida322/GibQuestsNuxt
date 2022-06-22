@@ -38,7 +38,7 @@ var Quest = /** @class */ (function () {
     __decorate([
         (0, typeorm_1.Column)({
             type: "text",
-            nullable: false
+            nullable: true
         }),
         __metadata("design:type", String)
     ], Quest.prototype, "image", void 0);

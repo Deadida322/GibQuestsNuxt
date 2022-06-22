@@ -28,11 +28,6 @@ var QuestDto = /** @class */ (function () {
         __metadata("design:type", String)
     ], QuestDto.prototype, "description", void 0);
     __decorate([
-        (0, class_validator_1.IsDefined)(),
-        (0, class_transformer_1.Expose)(),
-        __metadata("design:type", String)
-    ], QuestDto.prototype, "image", void 0);
-    __decorate([
         (0, class_transformer_1.Type)(function () { return AuthorDto_1.AuthorDto; }),
         __metadata("design:type", AuthorDto_1.AuthorDto)
     ], QuestDto.prototype, "author", void 0);

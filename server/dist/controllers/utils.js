@@ -68,14 +68,6 @@ function toDto(request, type) {
     });
 }
 exports.toDto = toDto;
-// export async function makeFreshDatabase() {
-//     const opts = { ...config }
-//     opts.synchronize = true;
-//     opts.dropSchema = true;
-//     opts.name = 'test-cleaner';
-//     const connection = await createConnection(opts);
-//     await connection.close();
-// }
 function ok(data) {
     return __assign({ status: 'ok' }, data && { data: data });
 }

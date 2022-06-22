@@ -56,6 +56,11 @@ const AppRoutes: Route[] = [
     action: quest.getQuest
   },
   {
+    path: "/getQuests",
+    method: "get",
+    action: quest.getQuests
+  },
+  {
     path: "/getImage",
     method: "get",
     action: quest.getImage

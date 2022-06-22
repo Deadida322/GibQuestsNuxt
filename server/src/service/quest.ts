@@ -186,8 +186,7 @@ export class QuestService {
 
     }
     public static async getQuest( id: number): Promise<any> {
-         
-         AppDataSource.createQueryBuilder
+  
         return catchOrmErrors(async () => {
             
             const quest = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
@@ -203,4 +202,19 @@ export class QuestService {
             return quest
         });
     }
+    public static async getQuests(): Promise<any> {
+       return catchOrmErrors(async () => {
+           
+           const quests = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
+           .leftJoinAndSelect("quest.stages", "stage")
+           .leftJoinAndSelect("stage.stageAction", "stage_action")
+           .leftJoinAndSelect("stage.stageTest", "stage_test")
+           .leftJoinAndSelect("stage_test.question", "question")
+           .leftJoinAndSelect("question.answer", "answer")
+           .leftJoinAndSelect("question.rightAnswer", "right_answer")
+           .getMany()
+
+           return quests
+       });
+   }
 }

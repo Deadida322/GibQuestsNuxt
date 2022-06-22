@@ -45,6 +45,11 @@ var routes_1 = require("./routes");
 var config = require("config");
 var fileUpload = require("express-fileupload");
 var port = config.get("port");
+var cors = require('cors');
+var path = require('path');
+var corsOptions = {
+    origin: ['http://localhost:8080'],
+};
 data_source_1.AppDataSource.initialize().then(function () { return __awaiter(void 0, void 0, void 0, function () {
     var app;
     return __generator(this, function (_a) {
@@ -52,6 +57,8 @@ data_source_1.AppDataSource.initialize().then(function () { return __awaiter(voi
         // app.use(bodyParser.json());
         // app.use(bodyParser.urlencoded({ extended: true }));
         app.use(express.json());
+        app.use(cors(corsOptions));
+        app.use('/img', express.static(path.join(__dirname, '/images')));
         app.use(express.urlencoded({ extended: true }));
         app.use(fileUpload());
         // const options = {

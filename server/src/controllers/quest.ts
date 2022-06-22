@@ -22,7 +22,10 @@ export async function getQuest(request: Request, response: Response) {
     const res = await QuestService.getQuest(+request.query.id)
     res ? response.json(ok(res)) : response.json(error('Не существует квеста с данным id'))  
 }
-
+export async function getQuests(request: Request, response: Response) {
+    const res = await QuestService.getQuests()
+    response.json(ok(res)) 
+}
 export async function create(request: Request, response: Response) {
     const quest = plainToClass(QuestDto, request.body);
     const errors = await validate(quest, { skipMissingProperties: true });

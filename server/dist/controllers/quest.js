@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getQuest = void 0;
+exports.createQrTest = exports.getImage = exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
@@ -45,6 +45,7 @@ var dto_1 = require("./dto");
 var quest_1 = require("../service/quest");
 var fs = require("fs");
 var path = require("path");
+var QRCode = require("qrcode");
 function getQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var res;
@@ -78,7 +79,7 @@ function create(request, response) {
                     if (errors.length) {
                         throw new error_1.ArgumentError();
                     }
-                    return [4 /*yield*/, quest_1.QuestService.add(quest.title, quest.description, quest.image, quest.stages, quest.author.username)];
+                    return [4 /*yield*/, quest_1.QuestService.add(quest.title, quest.description, quest.stages, quest.author.username)];
                 case 2:
                     res = _a.sent();
                     response.json((0, utils_1.ok)(res));
@@ -179,12 +180,55 @@ function updateImage(request, response) {
     });
 }
 exports.updateImage = updateImage;
-// export async function getPureSql(request: Request, response: Response) {
-//     if (!request.query.id) {
-//         response.json(ok(await AuthorService.getPureSql()))
-//         return;
-//     }
-//     const id = request.query.id as string
-//     response.json(ok(await AuthorService.getPureSql(id)));
-// }
+function getImage(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            if (!request.query.image) {
+                response.json((0, utils_1.error)('Введите query параметр image квеста'));
+            }
+            try {
+                fs.createReadStream(request.query.image).pipe(response);
+            }
+            catch (e) {
+                response.json((0, utils_1.error)(e.message));
+            }
+            return [2 /*return*/];
+        });
+    });
+}
+exports.getImage = getImage;
+function createQrTest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var word, pathQr_1, base64Image_1, e_4;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    word = request.query.word;
+                    if (!request.query.word) {
+                        response.json((0, utils_1.error)('Введите query параметр word'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    pathQr_1 = path.join(__dirname, '../qr', "1.png");
+                    return [4 /*yield*/, QRCode.toDataURL(word, function (err, src) {
+                            if (err)
+                                response.send("Error occured");
+                            base64Image_1 = src.split(';base64,').pop();
+                            fs.writeFileSync(pathQr_1, base64Image_1, { encoding: 'base64' });
+                        })];
+                case 2:
+                    _a.sent();
+                    fs.createReadStream(pathQr_1).pipe(response);
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_4 = _a.sent();
+                    response.json((0, utils_1.error)(e_4.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.createQrTest = createQrTest;
 //# sourceMappingURL=quest.js.map
