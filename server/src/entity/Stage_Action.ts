@@ -36,7 +36,7 @@ export class Stage_Action {
     })
     text: string
 
-    @OneToOne(() => Stage, (stage) => stage.stageAction)
+    @OneToOne(() => Stage, (stage) => stage.stageAction, {onDelete: "CASCADE"})
     @JoinColumn()
     stage: Stage
 

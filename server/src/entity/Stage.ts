@@ -31,7 +31,7 @@ export class Stage {
     })
     name: string
 
-    @ManyToOne(() => Quest, (quest) => quest.stages)
+    @ManyToOne(() => Quest, (quest) => quest.stages, {onDelete: "CASCADE"})
     quest: Quest
 
 

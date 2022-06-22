@@ -32,7 +32,7 @@ export class Question {
     type: QuestionEnum
     
 
-    @ManyToOne(() => Stage_Test, (stageTest) => stageTest.question)
+    @ManyToOne(() => Stage_Test, (stageTest) => stageTest.question, {onDelete: "CASCADE"})
     stageTest: Stage_Test
 
     @OneToMany(() => Answer, (answer) => answer.question, {cascade: true})
