@@ -3,7 +3,7 @@
         <Header title='Ваши квесты'/>
         <v-main class="pa-2 mt-4">
             <Search :placeholder="'Найти среди своих'" @search="search"/>
-            <Quest edit v-for="(item, key) in createdQuests" :key="key" :item="item"/>
+            <Quest class="mb-2" edit v-for="(item, key) in quests" :key="key" :item="item"/>
             <Add @click="createNew" class="mt-5"><v-list>
                 <v-list-item-group>
                         <v-list-item @click="createNew" color="primary">
@@ -28,6 +28,19 @@ export default {
         Quest,
         Add
     },
+    data(){
+        return{
+            quests: {}
+        }
+    },
+    created(){
+        if(!this.isLoggedIn) this.$router.push('/login')
+        this.$axios.get(`getCreatedQuests?id=${this.user.id}`).then((res)=>{
+            this.quests = res.data.data
+            console.log(this.quests)
+        })
+
+    },
     methods: {
         search(e){
             console.log(e)
@@ -38,7 +51,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('create', ['createdQuests'])
+        ...mapState('auth', ['user', 'isLoggedIn'])
     }
 }
 </script>

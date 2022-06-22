@@ -214,6 +214,7 @@ export default {
         },
         addQuestion(type){
             this.questions.push({
+                number: this.questions.length ? this.questions.length: 0, 
                 contain: 'При чём здесь ёжики?',
                 answers: [
                     'Смешарики',

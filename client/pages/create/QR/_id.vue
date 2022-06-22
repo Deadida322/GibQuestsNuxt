@@ -23,9 +23,8 @@
             <div>
                 <h2 class="text-body-1 my-2">Текущий код</h2>
                 <v-card>
-                    {{this.qr}}
                     <v-img contain width="100%" class="qr" :src="qr">
-                        <v-btn fab color="warning" small class="download">
+                        <v-btn download="qr.png" :href="qr" fab color="warning" small class="download">
                             <v-icon>mdi-download</v-icon>
                         </v-btn>
                     </v-img>
@@ -67,6 +66,11 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
+        if (this.stage.to){
+            this.$axios.get(`/getQr?word=${this.stage.to}`).then(res=>{
+                this.qr = res.data.data
+            })
+        }
         if(this.stage && this.stage.type !='QR') this.$router.go(-1)
     },
     data(){
@@ -88,17 +92,10 @@ export default {
         },
         qrChange(stage){
             if(this.stage.to.length>1){
-                this.$axios.get(`qr?word=${this.stage.to}`).then(res=>{
-                    this.qr = res.data
-                    console.log(this.qr)
-                    let reader = new FileReader();
-                    reader.readAsDataURL(res.data);
-                    reader.onload = function () {
-                        this.qr = reader.result
-                    }.bind(this);
+                this.$axios.get(`/getQr?word=${this.stage.to}`).then(res=>{
+                    this.qr = res.data.data
                 })
             }
-            console.log(this.stage.to)
         }
     },
     computed:{

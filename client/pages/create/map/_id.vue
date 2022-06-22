@@ -88,12 +88,20 @@ export default {
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
         if(this.stage && this.stage.type !='Карта') this.$router.go(-1)
-        if(this.stage.x){
-            this.currentLat = this.stage.x
+        if(this.stage && this.stage.stageAction && this.stage.stageAction.lat){
+            this.currentLat = this.stage.stageAction.lat
         }
-        if(this.stage.y){
-            this.currentLong = this.stage.y
+        if(this.stage && this.stage.stageAction && this.stage.stageAction.long){
+            this.currentLong = this.stage.stageAction.long
         }
+        if(this.stage && this.stage.lat){
+            this.currentLat = this.stage.lat
+        }
+        if(this.stage && this.stage.long){
+            this.currentLong = this.stage.lat
+        }
+        console.log(this.stage)
+
         function success({ coords }) {
             const { latitude, longitude } = coords
             const position = [latitude, longitude]
@@ -134,8 +142,8 @@ export default {
         setStage(){
             this.currentLat = this.lat
             this.currentLong = this.long
-            this.stage.x = this.currentLat
-            this.stage.y = this.currentLong
+            this.stage.lat = this.currentLat
+            this.stage.long = this.currentLong
             this.quest.stages[this.id] = this.stage
             console.log(this.quest)
             this.$store.commit('create/setCurrentQuest', this.quest)

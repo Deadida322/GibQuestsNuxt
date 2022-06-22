@@ -20,17 +20,21 @@
                 <div class="primary--text pa-2 text-h6 text-center">
                     {{currentStage.name}}
                 </div>
-                <VideoStage @stageComplete="stageComplete" v-if="currentStage.stageAction.url" :url="currentStage.stageAction.url"/>
-                <TextStage v-if="currentStage.text" :text="currentStage.text"/>
-                <MapStage :key="currentStageNumber+1" v-if="currentStage.x" :goalLat="currentStage.x" :goalLong="currentStage.y"/>
-                <QRStage v-if="currentStage.to" @stageComplete="stageComplete" :codeWord="currentStage.to"/>
-                <TestStage v-if="currentStage.questions"  @stageComplete="stageComplete" :questions="currentStage.questions"/>
+                <VideoStage @stageComplete="stageComplete" v-if="currentStage.stageAction && currentStage.stageAction.url" :url="currentStage.stageAction.url"/>
+                <TextStage v-if="currentStage.stageAction && currentStage.stageAction.text" :text="currentStage.stageAction.text"/>
+                <MapStage 
+                    v-if="currentStage.stageAction && currentStage.stageAction.lat"  
+                    :key="currentStageNumber+1" 
+                    @stageComplete="stageComplete"
+                    :goalLat="currentStage.stageAction.lat" 
+                    :goalLong="currentStage.stageAction.long"/>
+                <QRStage v-if="currentStage.stageAction && currentStage.stageAction.to" @stageComplete="stageComplete" :codeWord="currentStage.stageAction.to"/>
+                <TestStage v-if="currentStage.stageTest && currentStage.stageTest.questions"  @stageComplete="stageComplete" :questions="currentStage.testStage.questions"/>
                 <v-card-actions>
                     <v-btn :disabled="!currentStageNumber" @click="previousStage" dark color="blue">Назад</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn :disabled="!showBtn" @click="nextStage" color="primary">Далее</v-btn>
                 </v-card-actions>   
-                
             </v-card>
         </v-main>
         <Progress :goal="quest.stages && quest.stages.length" :current="currentStageNumber"/>
@@ -104,7 +108,7 @@ export default {
             if(stage && stage.type === 'Текст') {
                 this.showBtn = true
             }
-            console.log(stage)
+            console.log(stage, 'текущий')
             return stage || false
         }
     }

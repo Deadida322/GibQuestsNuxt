@@ -50,6 +50,10 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
+        if(this.stage.stageAction && this.stage.stageAction.text){
+            this.stage.text = this.stage.stageAction.text
+        }
+
         if(this.stage && this.stage.type !='Текст') this.$router.go(-1)
     },
     data(){

@@ -49,6 +49,7 @@ var Answer_1 = require("../entity/Answer");
 var RightAnswer_1 = require("../entity/RightAnswer");
 var Stage_Action_1 = require("../entity/Stage_Action");
 var Quest_User_1 = require("../entity/Quest_User");
+var QRCode = require("qrcode");
 function saveQuestion(q, stageTest) {
     return __awaiter(this, void 0, void 0, function () {
         var questionRep, answerRep, rightAnswerRep, question, saveQuest;
@@ -116,7 +117,7 @@ var QuestService = /** @class */ (function () {
                                     resQuestSave = _a.sent();
                                     return [4 /*yield*/, stages.forEach(function (s) {
                                             return __awaiter(this, void 0, void 0, function () {
-                                                var stage, stageTest_1, stageAction;
+                                                var stage, stageTest_1, stageAction_1, word;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
@@ -138,29 +139,43 @@ var QuestService = /** @class */ (function () {
                                                             return [4 /*yield*/, s.test.questions.forEach(function (q) { return saveQuestion(q, stageTest_1); })];
                                                         case 3:
                                                             _a.sent();
-                                                            return [3 /*break*/, 6];
+                                                            return [3 /*break*/, 10];
                                                         case 4:
-                                                            stageAction = new Stage_Action_1.Stage_Action();
-                                                            if (stage.type === "QR") {
-                                                                stageAction.to = s.to;
-                                                            }
-                                                            else if (stage.type === "Видео") {
-                                                                stageAction.url = s.url;
-                                                            }
-                                                            else if (stage.type === "Карта") {
-                                                                stageAction.lat = s.lat;
-                                                                stageAction.long = s.long;
-                                                            }
-                                                            else {
-                                                                stageAction.text = s.text;
-                                                            }
-                                                            // console.log('stage',stage);
-                                                            stageAction.stage = stage;
-                                                            return [4 /*yield*/, stageActionRep.save(stageAction)];
+                                                            stageAction_1 = new Stage_Action_1.Stage_Action();
+                                                            if (!(stage.type === "QR")) return [3 /*break*/, 7];
+                                                            word = s.to;
+                                                            return [4 /*yield*/, QRCode.toDataURL(word, function (err, src) {
+                                                                    if (err) {
+                                                                        console.log(err);
+                                                                        throw new Error(err);
+                                                                    }
+                                                                    stageAction_1.to = src;
+                                                                })];
                                                         case 5:
                                                             _a.sent();
-                                                            _a.label = 6;
-                                                        case 6: return [2 /*return*/];
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction_1)];
+                                                        case 6:
+                                                            _a.sent();
+                                                            return [3 /*break*/, 8];
+                                                        case 7:
+                                                            if (stage.type === "Видео") {
+                                                                stageAction_1.url = s.url;
+                                                            }
+                                                            else if (stage.type === "Карта") {
+                                                                stageAction_1.lat = s.lat;
+                                                                stageAction_1.long = s.long;
+                                                            }
+                                                            else {
+                                                                stageAction_1.text = s.text;
+                                                            }
+                                                            _a.label = 8;
+                                                        case 8:
+                                                            stageAction_1.stage = stage;
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction_1)];
+                                                        case 9:
+                                                            _a.sent();
+                                                            _a.label = 10;
+                                                        case 10: return [2 /*return*/];
                                                     }
                                                 });
                                             });
@@ -310,6 +325,32 @@ var QuestService = /** @class */ (function () {
                                 case 1:
                                     quests = _a.sent();
                                     return [2 /*return*/, quests];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    QuestService.getCreatedQuests = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var quest;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Quest_1.Quest).createQueryBuilder('quest')
+                                        .leftJoinAndSelect("quest.stages", "stage")
+                                        .where("quest.authorId = :id", { id: id })
+                                        .leftJoinAndSelect("stage.stageAction", "stage_action")
+                                        .leftJoinAndSelect("stage.stageTest", "stage_test")
+                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("question.answer", "answer")
+                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        .getMany()];
+                                case 1:
+                                    quest = _a.sent();
+                                    return [2 /*return*/, quest];
                             }
                         });
                     }); })];

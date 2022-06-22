@@ -56,14 +56,19 @@ var AppRoutes = [
         action: controllers_1.quest.getQuest
     },
     {
+        path: "/getQuests",
+        method: "get",
+        action: controllers_1.quest.getQuests
+    },
+    {
+        path: "/getCreatedQuests",
+        method: "get",
+        action: controllers_1.quest.getCreatedQuests
+    },
+    {
         path: "/getImage",
         method: "get",
         action: controllers_1.quest.getImage
-    },
-    {
-        path: "/qr",
-        method: "get",
-        action: controllers_1.quest.createQrTest
     },
 ];
 function initRoutes(app) {

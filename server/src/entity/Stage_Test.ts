@@ -19,6 +19,6 @@ export class Stage_Test {
     stage: Stage
 
     @OneToMany(() => Question, (question) => question.stageTest, {cascade: true})
-    question: Question[]
+    questions: Question[]
 
 }

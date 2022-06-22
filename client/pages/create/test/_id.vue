@@ -37,8 +37,10 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
-        if(!this.stage.questions){
-            this.stage.questions = []
+        this.stage.questions = []
+        if(this.stage.test && this.stage.test.questions){
+            this.stage.questions = this.stage.test.questions
+            
         }
         if(this.stage && this.stage.type !='Тест') this.$router.go(-1)
     },
@@ -54,12 +56,18 @@ export default {
     methods: {
         setStage(){
             this.stage.questions = this.current
+            this.stage.test = {
+                title: 'зачем-то',
+                questions: []
+            }
+            this.stage.test.questions = this.currentTest
             this.quest.stages[this.id] = this.stage
-            console.log(this.quest)
+            console.log(this.stage, 'test такой вот')
             this.$store.commit('create/setCurrentQuest', this.quest)
             this.snackbar = true
         },
         testChange(test){
+            console.log(test)
             this.currentTest = test
         }
     },

@@ -136,7 +136,7 @@ export default {
             this.$axios.get(`/getQuest?id=${this.currentId}`).then(res=>{
                 this.quest = res.data.data
                 this.$store.commit('create/setCurrentQuest', this.quest)
-                this.background = 'http://localhost:8000/img'+this.quest.image.split('images')[1]
+                this.background = this.quest.image
                 console.log(this.background)
             })
         }
@@ -186,6 +186,7 @@ export default {
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
+            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
             if(this.currentId!='new'){
                 let data = new FormData()
                 data.append('image', e, e.name)
@@ -243,13 +244,10 @@ export default {
                         }
                     }).then(res=>{
                         this.currentId = res.data.data.id
-                        console.log(this.currentId)
-                        console.log(res)
                         const e = this.quest.image
                         let data = new FormData()
                         data.append('image', e, e.name)
                         this.$axios.post('/updateImage', data).then((res)=>{
-                            console.log('image')
                             this.$router.push(`/create/${this.currentId}`)
                             this.$store.commit('create/setCurrentQuest', this.quest)
 
@@ -319,10 +317,10 @@ export default {
                     if(!(this.quest.stages[i].url && reg.test(this.quest.stages[i].url.toLowerCase()))) errors[i]=true
                 }
                 if(this.quest.stages[i].type=='QR'){
-                    if(!this.quest.stages[i].word) errors[i]=true
+                    if(!this.quest.stages[i].to) errors[i]=true
                 }
                 if(this.quest.stages[i].type=='Карта'){
-                    if(!this.quest.stages[i].x || !this.quest.stages[i].y) errors[i]=true
+                    if(!this.quest.stages[i].lat || !this.quest.stages[i].long) errors[i]=true
                 }
             }
             return errors

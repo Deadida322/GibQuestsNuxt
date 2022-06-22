@@ -45,6 +45,8 @@ export default {
         return{
             key: 0,
             geo: 0,
+            latSuccess: false,
+            longSuccess: false,
             yourLat: 0,
             yourLong: 0,
             url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -54,6 +56,7 @@ export default {
         }
     },
     mounted(){
+        console.log(this.goalLat, this.goalLong)
         console.log('mounted')
         function success(e) {
             const { latitude, longitude } = e.coords
@@ -97,6 +100,25 @@ export default {
         },
         goal(){
             return latLng(this.goalLat, this.goalLong)
+        }
+    },
+    watch:{
+        yourLat(){
+            if(Math.abs(this.yourLat - this.goalLat)<1200){
+                this.latSuccess = true
+                console.log('asdasd');
+            }
+            if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
+
+        },
+        yourLong(){
+            if(Math.abs(this.yourLong - this.goalLong)<2000) {
+                this.longSuccess = true
+                console.log('asdasd');
+            } 
+            if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
+            console.log(this.latSuccess, this.longSuccess );
+
         }
     }
 }

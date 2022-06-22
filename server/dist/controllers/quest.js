@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createQrTest = exports.getImage = exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getQuest = void 0;
+exports.getImage = exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
@@ -45,7 +45,8 @@ var dto_1 = require("./dto");
 var quest_1 = require("../service/quest");
 var fs = require("fs");
 var path = require("path");
-var QRCode = require("qrcode");
+var get_base_url_1 = require("get-base-url");
+var crypto = require("crypto");
 function getQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var res;
@@ -66,6 +67,41 @@ function getQuest(request, response) {
     });
 }
 exports.getQuest = getQuest;
+function getQuests(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0: return [4 /*yield*/, quest_1.QuestService.getQuests()];
+                case 1:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getQuests = getQuests;
+function getCreatedQuests(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.id) {
+                        response.json((0, utils_1.error)('Введите query параметр id, (id автора квеста)'));
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.getCreatedQuests(+request.query.id)];
+                case 1:
+                    res = _a.sent();
+                    res ? response.json((0, utils_1.ok)(res)) : response.json((0, utils_1.error)('Не существует записей с таким автором'));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getCreatedQuests = getCreatedQuests;
 function create(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var quest, errors, res;
@@ -149,7 +185,7 @@ function trackQuest(request, response) {
 exports.trackQuest = trackQuest;
 function updateImage(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var documentFile, pathImage, res, e_3;
+        var documentFile, hash, pathImage, pathToClient, res, e_3;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -158,23 +194,30 @@ function updateImage(request, response) {
                     }
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 5, , 6]);
                     documentFile = request.files;
-                    pathImage = path.join(__dirname, '../images', documentFile.image.name);
-                    fs.writeFileSync(pathImage, documentFile.image.data);
+                    return [4 /*yield*/, crypto.createHash('md5').update(Date.now().toString()).digest('hex')];
+                case 2:
+                    hash = _a.sent();
+                    pathImage = path.join(__dirname, '../image', "".concat(hash, ".png"));
+                    return [4 /*yield*/, fs.writeFileSync(pathImage, documentFile.image.data)];
+                case 3:
+                    _a.sent();
                     if (!fs.existsSync(pathImage)) {
                         response.json((0, utils_1.error)('Ошибка при сохранении изображения'));
                     }
-                    return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathImage)];
-                case 2:
+                    pathToClient = path.join((0, get_base_url_1.getBaseUrl)(), '../img', "".concat(hash, ".png"));
+                    return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathToClient)];
+                case 4:
                     res = _a.sent();
                     response.json((0, utils_1.ok)(res));
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 6];
+                case 5:
                     e_3 = _a.sent();
+                    console.log(e_3);
                     response.json((0, utils_1.error)(e_3.message));
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     });
@@ -197,38 +240,4 @@ function getImage(request, response) {
     });
 }
 exports.getImage = getImage;
-function createQrTest(request, response) {
-    return __awaiter(this, void 0, void 0, function () {
-        var word, pathQr_1, base64Image_1, e_4;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    word = request.query.word;
-                    if (!request.query.word) {
-                        response.json((0, utils_1.error)('Введите query параметр word'));
-                    }
-                    _a.label = 1;
-                case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    pathQr_1 = path.join(__dirname, '../qr', "1.png");
-                    return [4 /*yield*/, QRCode.toDataURL(word, function (err, src) {
-                            if (err)
-                                response.send("Error occured");
-                            base64Image_1 = src.split(';base64,').pop();
-                            fs.writeFileSync(pathQr_1, base64Image_1, { encoding: 'base64' });
-                        })];
-                case 2:
-                    _a.sent();
-                    fs.createReadStream(pathQr_1).pipe(response);
-                    return [3 /*break*/, 4];
-                case 3:
-                    e_4 = _a.sent();
-                    response.json((0, utils_1.error)(e_4.message));
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
-            }
-        });
-    });
-}
-exports.createQrTest = createQrTest;
 //# sourceMappingURL=quest.js.map

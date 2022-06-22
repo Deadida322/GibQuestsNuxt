@@ -21,7 +21,7 @@
                     </v-list-item-icon>
                     <v-list-item-title>Редактировать</v-list-item-title>
                 </v-list-item>
-                <v-list-item color="warning">
+                <v-list-item @click="copy" color="warning">
                     <v-list-item-icon>
                         <v-icon color="warning">mdi-clipboard</v-icon>
                     </v-list-item-icon>
@@ -45,6 +45,15 @@
             id: {
                 type: Number | String,
                 required: true
+            }
+        },
+        methods:{
+            copy(){
+                navigator.clipboard.writeText(`${this.$route.fullPath}/view/${this.id}`).then(function() {
+                    console.log('Copied!');
+                }, function() {
+                    console.log('Copy error')
+                });
             }
         }
     }
