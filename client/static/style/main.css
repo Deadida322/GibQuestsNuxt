@@ -48,3 +48,7 @@ html{
 .redBorder{
     border: 2px solid red;
 }
+body{
+    position: relative;
+    overflow-x: hidden;
+}

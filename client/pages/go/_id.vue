@@ -1,5 +1,5 @@
 <template>
-    <div v-if="getCurrent">
+    <div v-if="quest && quest.stages">
         <Header title='QuestGib'/>
         <v-row class="my-3 d-flex justify-space-between text-center align-center">
             <v-col no-gutters class="col col-2">
@@ -14,13 +14,13 @@
             </v-col>
             <v-col class="col col-2"></v-col>
         </v-row>
-        <v-main class="pa-2 mt-4">
+        <v-main v-if="currentStage" class="pa-2 mt-4">
             <v-card class="relative">
                 <v-chip small class="stage-chip">{{currentStage.type}}</v-chip>
                 <div class="primary--text pa-2 text-h6 text-center">
                     {{currentStage.name}}
                 </div>
-                <VideoStage @stageComplete="stageComplete" v-if="currentStage.url" :url="currentStage.url"/>
+                <VideoStage @stageComplete="stageComplete" v-if="currentStage.stageAction.url" :url="currentStage.stageAction.url"/>
                 <TextStage v-if="currentStage.text" :text="currentStage.text"/>
                 <MapStage :key="currentStageNumber+1" v-if="currentStage.x" :goalLat="currentStage.x" :goalLong="currentStage.y"/>
                 <QRStage v-if="currentStage.to" @stageComplete="stageComplete" :codeWord="currentStage.to"/>
@@ -29,10 +29,11 @@
                     <v-btn :disabled="!currentStageNumber" @click="previousStage" dark color="blue">Назад</v-btn>
                     <v-spacer></v-spacer>
                     <v-btn :disabled="!showBtn" @click="nextStage" color="primary">Далее</v-btn>
-                </v-card-actions>
+                </v-card-actions>   
+                
             </v-card>
         </v-main>
-        <Progress :goal="getCurrent.stages.length" :current="currentStageNumber"/>
+        <Progress :goal="quest.stages && quest.stages.length" :current="currentStageNumber"/>
     </div>
 </template>
 
@@ -57,37 +58,54 @@ export default {
         TestStage,
         Progress
     },
-    created(){
-        if(!this.isLoggedIn) this.$router.push('/login')
+    mounted(){
+        this.id = this.$route.params.id
+        this.$axios.get(`/getQuest?id=${this.id}`).then((res)=>{
+            this.quest=res.data.data
+        })
+
     },
     data(){
         return{
+            quest: {},
+            id: 0,
             currentStageNumber: 0,
             showBtn: false
         }
     },
     methods: {
         stageComplete(){
-            console.log('complete')
             this.showBtn = true
         },
         nextStage(){
             this.showBtn = false
+            let data = {
+                userId: this.user.id,
+                questId: this.quest.id,
+                progress: this.currentStageNumber
+            }
+            this.$axios.post('/processQuest', data).then(res=>{
+                console.log(res, 'потекло говно по трубам')
+            })
             this.currentStageNumber++
         },
         previousStage(){
+            this.showBtn = true
             this.currentStageNumber--
         }
     },
     computed:{
-        ...mapState('auth', ['isLoggedIn']),
-        ...mapGetters('quests', ['getCurrent']),
+        ...mapState('auth', ['isLoggedIn', 'user']),
         currentStage() {
-            const stage = this.getCurrent.stages[this.currentStageNumber]
-            if(stage.type === 'Текст') {
+            let stage = {}
+            if(this.quest && this.quest.stages){
+                stage = this.quest.stages[this.currentStageNumber]
+            }
+            if(stage && stage.type === 'Текст') {
                 this.showBtn = true
             }
-            return stage
+            console.log(stage)
+            return stage || false
         }
     }
 }

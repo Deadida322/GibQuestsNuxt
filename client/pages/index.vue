@@ -20,11 +20,14 @@ export default {
   },
   data(){
     return{
-      search: ''
+      search: '',
+      quests: []
     }
   },
-  computed:{
-    ...mapState('quests', ['quests'])
+  created(){
+    this.$axios.get('/getQuests').then((res)=>{
+      this.quests = res.data.data
+    })
   }
 }
 </script>

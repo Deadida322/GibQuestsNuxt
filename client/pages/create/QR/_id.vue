@@ -14,9 +14,9 @@
                 <v-col class="col col-2"></v-col>
             </v-row>
             <v-text-field 
-                v-model="stage.word"
-                @input="$v.stage.word.$touch(); qrChange()"
-                @blur="$v.stage.word.$touch()"
+                v-model="stage.to"
+                @input="$v.stage.to.$touch(); qrChange()"
+                @blur="$v.stage.to.$touch()"
                 :error-messages="toErrors"
                 solo label="Кодовое слово"/>
             <v-btn class="w-100" color="primary">Сгенерировать</v-btn>
@@ -57,7 +57,7 @@ export default {
     mixins: [validationMixin],
     validations: {
         stage: {
-            word: { required, minLength: minLength(2) }
+            to: { required, minLength: minLength(2) }
         }
     },
     components:{
@@ -87,8 +87,8 @@ export default {
             this.snackbar = true
         },
         qrChange(stage){
-            if(this.stage.word.length>1){
-                this.$axios.get(`qr?word=${this.stage.word}`).then(res=>{
+            if(this.stage.to.length>1){
+                this.$axios.get(`qr?word=${this.stage.to}`).then(res=>{
                     this.qr = res.data
                     console.log(this.qr)
                     let reader = new FileReader();
@@ -98,16 +98,16 @@ export default {
                     }.bind(this);
                 })
             }
-            console.log(this.stage.word)
+            console.log(this.stage.to)
         }
     },
     computed:{
         ...mapState('create', ['currentStage']),
         toErrors(){
             const errors = []
-            if(!this.$v.stage.word.$dirty) return errors
-            !this.$v.stage.word.minLength && errors.push('Слишком короткое кодовое слово')
-            !this.$v.stage.word.required && errors.push('Кодовое слово обязательно')
+            if(!this.$v.stage.to.$dirty) return errors
+            !this.$v.stage.to.minLength && errors.push('Слишком короткое кодовое слово')
+            !this.$v.stage.to.required && errors.push('Кодовое слово обязательно')
             return errors
         }
     }

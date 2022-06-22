@@ -6,11 +6,11 @@
 export default {
     mounted(){
         window.focus()
+        console.log(this.url)
         let ctx = this
         window.onblur = function(){
             var monitor = setInterval(function(){
                 var elem = document.activeElement;
-                console.log(elem)
                 if(elem && elem.tagName == 'IFRAME'){
                     setTimeout(()=>{ctx.$emit('stageComplete')}, 7000)
                     clearInterval(monitor)
@@ -31,6 +31,7 @@ export default {
     },
     computed:{
         computedSrc(){
+            console.log(this.url)
             const viewCode = this.url.split('=')[1]
             return `https://www.youtube.com/embed/${viewCode}`
         }

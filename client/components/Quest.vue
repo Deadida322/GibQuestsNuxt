@@ -10,7 +10,7 @@
             {{item.title}} 
            <QuestMenu v-if="edit" :id="item.id"/>
         </v-card-title>
-        <div v-if="item.users.length">
+        <div v-if="item.users && item.users.length">
             <v-card-subtitle class="py-0 pb-2 text--secondary">Сейчас проходят</v-card-subtitle>
             <v-card-text>
                 <v-avatar color="green"  class="mr-2 white--text" v-for="(item, key) in item.users" :key="key">{{item.username.slice(0,2).toUpperCase()}}</v-avatar>
