@@ -7,8 +7,8 @@ import { QuestDto,ProcessQustDto } from './dto';
 import { QuestService } from "../service/quest";
 import * as fs from 'fs';
 import * as path from 'path';
-import * as QRCode from 'qrcode';
-
+import {getBaseUrl} from 'get-base-url';
+import * as crypto from 'crypto';
 interface MulterRequest extends Request {
     files: any;
 }
@@ -26,6 +26,16 @@ export async function getQuests(request: Request, response: Response) {
     const res = await QuestService.getQuests()
     response.json(ok(res)) 
 }
+export async function getCreatedQuests(request: Request, response: Response) {
+    if (!request.query.id) {
+        response.json(error('Введите query параметр id, (id автора квеста)'))
+        return;
+    }
+
+    const res = await QuestService.getCreatedQuests(+request.query.id)
+    res ? response.json(ok(res)) : response.json(error('Не существует записей с таким автором'))  
+}
+
 export async function create(request: Request, response: Response) {
     const quest = plainToClass(QuestDto, request.body);
     const errors = await validate(quest, { skipMissingProperties: true });
@@ -72,15 +82,19 @@ export async function updateImage(request: Request, response: Response) {
     }
     try {
         const documentFile  = (request as MulterRequest).files;
-        const pathImage = path.join(__dirname, '../images', documentFile.image.name)
-        fs.writeFileSync(pathImage,documentFile.image.data);
+        var hash = await crypto.createHash('md5').update(Date.now().toString()).digest('hex');
+        const pathImage = path.join(__dirname, '../image', `${hash}.png`)
+        await fs.writeFileSync(pathImage,documentFile.image.data);
         if(!fs.existsSync(pathImage)) {
             response.json(error('Ошибка при сохранении изображения'))
         }
-        const res = await QuestService.updateImagePath(+request.query.id, pathImage)
+        let pathToClient = path.join(getBaseUrl(), '../img', `${hash}.png`)
+        const res = await QuestService.updateImagePath(+request.query.id, pathToClient)
         response.json(ok(res));
     }
     catch(e) {
+        console.log(e);
+        
         response.json(error(e.message));
     }
    
@@ -99,23 +113,3 @@ export async function getImage(request: Request, response: Response) {
    
 }
 
-export async function createQrTest(request: Request, response: Response) {
-    const word = <string>request.query.word
-    if(!request.query.word) {
-        response.json(error('Введите query параметр word'))
-    }
-    try {   
-        let pathQr = path.join(__dirname, '../qr',`1.png`)
-        let base64Image
-        await QRCode.toDataURL(word, (err, src) => {
-            if (err) response.send("Error occured");
-            base64Image = src.split(';base64,').pop(); 
-            fs.writeFileSync(pathQr, base64Image, {encoding: 'base64'})
-        });
-        fs.createReadStream(pathQr).pipe(response)
-    }
-    catch(e) {
-        response.json(error(e.message));
-    }
-   
-}

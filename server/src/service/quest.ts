@@ -1,6 +1,6 @@
 import { Quest } from '../entity/Quest';
 import { User } from "../entity/User";
-import { NotFoundError, UnexpectedError } from "../error";
+import { NotFoundError, UnexpectedError, UnexpectedDBError } from "../error";
 import { catchOrmErrors } from "./utils";
 import { AppDataSource } from "../data-source"
 import { Stage, StageEnumArray} from '../entity/Stage';
@@ -12,6 +12,7 @@ import { Answer } from '../entity/Answer';
 import { RightAnswer } from '../entity/RightAnswer';
 import { Stage_Action } from '../entity/Stage_Action';
 import { Quest_User } from '../entity/Quest_User';
+import * as QRCode from 'qrcode';
 
 async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
     const questionRep = AppDataSource.getRepository(Question);
@@ -98,7 +99,17 @@ export class QuestService {
                 else {
                     const stageAction = new Stage_Action()
                     if(stage.type === "QR") {
-                        stageAction.to = (<StageActionQrDto>(s as unknown)).to
+                        let word = (<StageActionQrDto>(s as unknown)).to
+
+                        await QRCode.toDataURL(word, (err, src) => {
+                            if (err) {
+                                console.log(err); 
+                                throw new Error(err);
+                            }
+                            stageAction.to = src                     
+                        });
+                        await stageActionRep.save(stageAction)
+                        
                     }
                     else if(stage.type === "Видео") {
                         stageAction.url = (<StageActionMediaDto>(s as unknown)).url
@@ -110,8 +121,6 @@ export class QuestService {
                     else {
                         stageAction.text = (<StageActionTextDto>(s as unknown)).text
                     }
-                    // console.log('stage',stage);
-                    
                     stageAction.stage = stage
                     await stageActionRep.save(stageAction)
                     
@@ -204,7 +213,7 @@ export class QuestService {
     }
     public static async getQuests(): Promise<any> {
        return catchOrmErrors(async () => {
-           
+
            const quests = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
            .leftJoinAndSelect("quest.stages", "stage")
            .leftJoinAndSelect("stage.stageAction", "stage_action")
@@ -217,4 +226,22 @@ export class QuestService {
            return quests
        });
    }
+   public static async getCreatedQuests( id: number): Promise<any> {
+  
+    return catchOrmErrors(async () => {
+        
+        const quest = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
+        .leftJoinAndSelect("quest.stages", "stage")
+        .where("quest.authorId = :id", {id: id})
+        .leftJoinAndSelect("stage.stageAction", "stage_action")
+        .leftJoinAndSelect("stage.stageTest", "stage_test")
+        .leftJoinAndSelect("stage_test.question", "question")
+        .leftJoinAndSelect("question.answer", "answer")
+        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+        .getMany()
+
+        return quest
+    });
+}
+   
 }
