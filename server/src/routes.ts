@@ -70,6 +70,11 @@ const AppRoutes: Route[] = [
     method: "get",
     action: quest.getImage
   },
+  {
+    path: "/getQr",
+    method: "get",
+    action: quest.getQR
+  },
   
    
 ];

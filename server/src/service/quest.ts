@@ -104,7 +104,7 @@ export class QuestService {
                         await QRCode.toDataURL(word, (err, src) => {
                             if (err) {
                                 console.log(err); 
-                                throw new Error(err);
+                                throw new UnexpectedDBError();
                             }
                             stageAction.to = src                     
                         });
@@ -229,19 +229,29 @@ export class QuestService {
    public static async getCreatedQuests( id: number): Promise<any> {
   
     return catchOrmErrors(async () => {
-        
-        const quest = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
-        .leftJoinAndSelect("quest.stages", "stage")
-        .where("quest.authorId = :id", {id: id})
-        .leftJoinAndSelect("stage.stageAction", "stage_action")
-        .leftJoinAndSelect("stage.stageTest", "stage_test")
-        .leftJoinAndSelect("stage_test.question", "question")
-        .leftJoinAndSelect("question.answer", "answer")
-        .leftJoinAndSelect("question.rightAnswer", "right_answer")
-        .getMany()
+            const quest = await AppDataSource.getRepository(Quest).createQueryBuilder('quest')
+            .leftJoinAndSelect("quest.stages", "stage")
+            .where("quest.authorId = :id", {id: id})
+            .leftJoinAndSelect("stage.stageAction", "stage_action")
+            .leftJoinAndSelect("stage.stageTest", "stage_test")
+            .leftJoinAndSelect("stage_test.question", "question")
+            .leftJoinAndSelect("question.answer", "answer")
+            .leftJoinAndSelect("question.rightAnswer", "right_answer")
+            .getMany()
 
-        return quest
-    });
+            return quest
+        });
+
+    }
+    public static async getQR( word: string): Promise<string> {
+        return new Promise((resolve,reject) => {
+            QRCode.toDataURL(word, (err, src) => {
+                if (err) {
+                    return reject('Ошибка при создании qr кода')
+                }
+                return resolve(src)                        
+            });
+        }) 
+    }
 }
-   
-}
+
