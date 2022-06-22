@@ -11,7 +11,7 @@
                 @input="$v.user.username.$touch()"
                 @blur="$v.user.username.$touch()"
                 label="Имя пользователя"
-                solo></v-text-field>
+                outlined></v-text-field>
             <v-text-field 
                 v-model="user.password"
                 :error-messages="passwordErrors"
@@ -19,8 +19,15 @@
                 @input="$v.user.password.$touch()"
                 @blur="$v.user.password.$touch()"
                 label="Пароль" 
-                solo 
+                outlined 
                 type="password"></v-text-field>
+            <v-alert
+                v-if="error"
+                prominent
+                type="error"
+            >
+                {{error}}
+            </v-alert>
             <div class="d-flex">
                 <v-spacer></v-spacer>
                 <a class="w-100 text-right text-decoration-underline" @click="$router.push('/register')">Регистрация</a>
@@ -45,7 +52,12 @@ import { required } from 'vuelidate/lib/validators'
 
 export default {
     mixins: [validationMixin],
-
+    props: {
+        error: {
+            type: [String, Boolean],
+            default: false
+        }
+    },
     validations: {
         user:{
             username: { required },

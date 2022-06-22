@@ -40,7 +40,7 @@ async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
 }
 
 export class QuestService {
-    public static async add(title: string, description: string, image: string, stages: StageDto[], username: string): Promise<Quest> {
+    public static async add(title: string, description: string, stages: StageDto[], username: string): Promise<Quest> {
         const questRep = AppDataSource.getRepository(Quest);
         const stageRep = AppDataSource.getRepository(Stage);
         const userRep = AppDataSource.getRepository(User);
@@ -53,7 +53,6 @@ export class QuestService {
             const quest = new Quest();
             quest.title = title;
             quest.description = description;
-            quest.image = image;
             const author = await userRep.findOneBy({username}); 
             quest.author = author
             const resQuestSave = await questRep.save(quest)

@@ -14,16 +14,17 @@
                 <v-col class="col col-2"></v-col>
             </v-row>
             <v-text-field 
-                v-model="stage.to"
-                @input="$v.stage.to.$touch()"
-                @blur="$v.stage.to.$touch()"
+                v-model="stage.word"
+                @input="$v.stage.word.$touch(); qrChange()"
+                @blur="$v.stage.word.$touch()"
                 :error-messages="toErrors"
                 solo label="Кодовое слово"/>
             <v-btn class="w-100" color="primary">Сгенерировать</v-btn>
             <div>
                 <h2 class="text-body-1 my-2">Текущий код</h2>
                 <v-card>
-                    <v-img contain width="100%" class="qr" src="https://e7.pngegg.com/pngimages/714/35/png-clipart-qr-code-barcode-scanners-scanner-computer-code-angle-text.png">
+                    {{this.qr}}
+                    <v-img contain width="100%" class="qr" :src="qr">
                         <v-btn fab color="warning" small class="download">
                             <v-icon>mdi-download</v-icon>
                         </v-btn>
@@ -56,7 +57,7 @@ export default {
     mixins: [validationMixin],
     validations: {
         stage: {
-            to: { required, minLength: minLength(2) }
+            word: { required, minLength: minLength(2) }
         }
     },
     components:{
@@ -66,11 +67,12 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
-        console.log(this.stage, this.quest)
+        if(this.stage && this.stage.type !='QR') this.$router.go(-1)
     },
     data(){
         return{
             stage: '',
+            qr: '',
             id: 0,
             codeWord: '',
             snackbar: false
@@ -81,20 +83,31 @@ export default {
             this.$v.stage.$touch()
             if(this.$v.stage.$anyError) return
             this.quest.stages[this.id] = this.stage
-            console.log(this.quest)
             this.$store.commit('create/setCurrentQuest', this.quest)
             this.snackbar = true
         },
         qrChange(stage){
+            if(this.stage.word.length>1){
+                this.$axios.get(`qr?word=${this.stage.word}`).then(res=>{
+                    this.qr = res.data
+                    console.log(this.qr)
+                    let reader = new FileReader();
+                    reader.readAsDataURL(res.data);
+                    reader.onload = function () {
+                        this.qr = reader.result
+                    }.bind(this);
+                })
+            }
+            console.log(this.stage.word)
         }
     },
     computed:{
         ...mapState('create', ['currentStage']),
         toErrors(){
             const errors = []
-            if(!this.$v.stage.to.$dirty) return errors
-            !this.$v.stage.to.minLength && errors.push('Слишком короткое кодовое слово')
-            !this.$v.stage.to.required && errors.push('Кодовое слово обязательно')
+            if(!this.$v.stage.word.$dirty) return errors
+            !this.$v.stage.word.minLength && errors.push('Слишком короткое кодовое слово')
+            !this.$v.stage.word.required && errors.push('Кодовое слово обязательно')
             return errors
         }
     }

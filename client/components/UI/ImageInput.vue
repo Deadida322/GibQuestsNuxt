@@ -90,7 +90,7 @@ export default {
         backgroundComputed(){
             if (!this.background) return 'https://paltodaytv.com/img/default.jpg'
             if (this.background.length > 100) return this.background
-            return this.base+this.background
+            return this.background
         }
     }
 }

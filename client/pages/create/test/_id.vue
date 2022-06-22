@@ -40,7 +40,7 @@ export default {
         if(!this.stage.questions){
             this.stage.questions = []
         }
-
+        if(this.stage && this.stage.type !='Тест') this.$router.go(-1)
     },
     data(){
         return{

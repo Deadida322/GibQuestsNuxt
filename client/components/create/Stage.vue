@@ -28,6 +28,10 @@
 export default {
     created(){
         this.stage = {...this.item}
+        if(this.stage.stageAction && this.stage.stageAction.url){
+            this.stage.url = this.stage.stageAction.url
+        }
+
     },
     data(){
         return{

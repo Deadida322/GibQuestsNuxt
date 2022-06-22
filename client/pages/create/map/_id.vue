@@ -87,6 +87,7 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
+        if(this.stage && this.stage.type !='Карта') this.$router.go(-1)
         if(this.stage.x){
             this.currentLat = this.stage.x
         }

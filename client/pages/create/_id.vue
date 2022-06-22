@@ -9,7 +9,7 @@
                     </v-icon>
                 </v-col>
                 <v-col class="col secondary--text text-h6 col-6">
-                {{quest.id}}
+                {{quest.title}}
                 </v-col>
                 <v-col class="col col-2"></v-col>
             </v-row>
@@ -49,7 +49,7 @@
             </v-alert>
             <div class="mt-4 mb-8 d-flex align-center justify-space-between">
                 <div class="text-h5">Этапы</div>
-                <Shuffling v-if="quest.stages.length" @shuffleComplete="shuffleComplete" :items="quest.stages"/>
+                <Shuffling v-if="quest.stages && quest.stages.length" @shuffleComplete="shuffleComplete" :items="quest.stages"/>
             </div>
             <wrapper :key="key">
                 <Stage 
@@ -127,10 +127,21 @@ export default {
         }
     },
     created(){
+        if(!this.isLoggedIn) this.$router.push('/login')
         this.currentId = this.$route.params.id
-        this.quest = JSON.parse(JSON.stringify(this.$store.getters['create/getCurrentQuest']))
+        this.quest = this.$store.getters['create/getCurrentQuest']
+        if(this.currentId != 'new'){
+            console.log(this.quest)
+            if(this.quest.id && this.quest.id!='new') return
+            this.$axios.get(`/getQuest?id=${this.currentId}`).then(res=>{
+                this.quest = res.data.data
+                this.$store.commit('create/setCurrentQuest', this.quest)
+                this.background = 'http://localhost:8000/img'+this.quest.image.split('images')[1]
+                console.log(this.background)
+            })
+        }
         if(this.currentId!=this.quest.id){
-            this.$router.push(`/create/${this.quest.id}`)
+            // this.$router.push(`/create/${this.quest.id}`)
         }
     },
     data(){
@@ -145,7 +156,9 @@ export default {
                 'Карта',
                 'Тест'
             ],
-            quest:{},
+            quest:{
+                title: 'Новый'
+            },
         }
     },
     components: {
@@ -173,6 +186,13 @@ export default {
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
+            if(this.currentId!='new'){
+                let data = new FormData()
+                data.append('image', e, e.name)
+                this.$axios.post(`/updateImage?id=${this.currentId}`, data).then((res)=>{
+                    console.log(res)
+                })
+            }
         },
         createTest(id){
             this.$store.commit('create/setCurrentStage', JSON.parse(JSON.stringify(this.quest.stages[id])))
@@ -194,6 +214,7 @@ export default {
             console.log(this.quest.stages)
             this.$v.quest.stages.$touch()
             let toPush =  {
+                number: this.quest.stages.length+1,
                 name: `Этап ${this.quest.stages.length+1}`,
                 type,
             }
@@ -212,11 +233,46 @@ export default {
         },
         setQuest(){
             this.$v.quest.$touch()
+            console.log(this.$v.quest.image)
             if(!this.$v.quest.$anyError && this.summaryStagesErrors){
+                if(this.currentId=='new'){
+                    this.$axios.post('/create', {
+                        ...this.quest,
+                        author: {
+                            ...this.user
+                        }
+                    }).then(res=>{
+                        this.currentId = res.data.data.id
+                        console.log(this.currentId)
+                        console.log(res)
+                        const e = this.quest.image
+                        let data = new FormData()
+                        data.append('image', e, e.name)
+                        this.$axios.post('/updateImage', data).then((res)=>{
+                            console.log('image')
+                            this.$router.push(`/create/${this.currentId}`)
+                            this.$store.commit('create/setCurrentQuest', this.quest)
+
+                        })
+                    })
+                } else {
+                    this.$axios.post('/create', {
+                        ...this.quest,
+                        author: {
+                            ...this.user
+                        }
+                    }).then(res=>{
+                        this.currentId = res.data.data.id
+                        console.log(this.currentId)
+                        console.log(res)
+                        this.$router.push(`/create/${this.currentId}`)
+                    })
+                }
             }
         }
     },
     computed: {
+        ...mapState('auth', ['user', 'isLoggedIn']),
         ...mapState('create', ['createdQuests']),
         titleErrors () {
             const errors = []
@@ -263,7 +319,7 @@ export default {
                     if(!(this.quest.stages[i].url && reg.test(this.quest.stages[i].url.toLowerCase()))) errors[i]=true
                 }
                 if(this.quest.stages[i].type=='QR'){
-                    if(!this.quest.stages[i].to) errors[i]=true
+                    if(!this.quest.stages[i].word) errors[i]=true
                 }
                 if(this.quest.stages[i].type=='Карта'){
                     if(!this.quest.stages[i].x || !this.quest.stages[i].y) errors[i]=true

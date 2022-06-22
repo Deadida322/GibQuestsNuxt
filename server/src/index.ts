@@ -9,15 +9,21 @@ import { initRoutes } from "./routes";
 import * as config from 'config';
 import * as fileUpload from 'express-fileupload';
 const port = config.get("port")
-
+const cors = require('cors');
+var path = require('path');
+let corsOptions = {
+    origin : ['http://localhost:8080'],
+}
 
 AppDataSource.initialize().then(async () => {
 
     const app = express();
     // app.use(bodyParser.json());
     // app.use(bodyParser.urlencoded({ extended: true }));
-
     app.use(express.json());
+    app.use(cors(corsOptions))
+    app.use('/img',express.static(path.join(__dirname, '/images')));
+
     app.use(express.urlencoded({ extended: true }));
     app.use(fileUpload())
     // const options = {

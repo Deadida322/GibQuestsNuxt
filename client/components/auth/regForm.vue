@@ -11,7 +11,7 @@
                 @input="$v.user.name.$touch()"
                 @blur="$v.user.name.$touch()"
                 label="Имя"
-                solo></v-text-field>
+                outlined></v-text-field>
             <v-text-field 
                 v-model="user.surname"
                 :error-messages="surnameErrors"
@@ -19,7 +19,7 @@
                 @input="$v.user.surname.$touch()"
                 @blur="$v.user.surname.$touch()"
                 label="Фамилия"
-                solo></v-text-field>
+                outlined></v-text-field>
             <v-text-field 
                 v-model="user.username"
                 :error-messages="usernameErrors"
@@ -27,7 +27,7 @@
                 @input="$v.user.username.$touch()"
                 @blur="$v.user.username.$touch()"
                 label="Имя пользователя"
-                solo></v-text-field>
+                outlined></v-text-field>
             <v-text-field 
                 v-model="user.password"
                 :error-messages="passwordErrors"
@@ -35,8 +35,15 @@
                 @input="$v.user.password.$touch()"
                 @blur="$v.user.password.$touch()"
                 label="Пароль" 
-                solo 
+                outlined 
                 type="password"></v-text-field>
+            <v-alert
+                v-if="error"
+                prominent
+                type="error"
+            >
+                {{error}}
+            </v-alert>
             <div class="d-flex">
                 <v-spacer></v-spacer>
                 <a class="w-100 text-right text-decoration-underline" @click="$router.push('/login')">Авторизация</a>
@@ -61,7 +68,12 @@ import { required } from 'vuelidate/lib/validators'
 
 export default {
     mixins: [validationMixin],
-
+    props: {
+        error: {
+            type: [String, Boolean],
+            default: false
+        }
+    },
     validations: {
         user:{
             name: { required },

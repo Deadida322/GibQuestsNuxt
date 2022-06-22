@@ -29,7 +29,7 @@ export async function create(request: Request, response: Response) {
     if (errors.length) {
         throw new ArgumentError();
     }
-    const res = await QuestService.add(quest.title, quest.description, quest.image, quest.stages, quest.author.username)
+    const res = await QuestService.add(quest.title, quest.description, quest.stages, quest.author.username)
     response.json(ok(res));
 }
 

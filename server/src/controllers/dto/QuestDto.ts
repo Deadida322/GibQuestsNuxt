@@ -16,10 +16,6 @@ export class QuestDto {
     @Expose()
     description: string;
 
-    @IsDefined()
-    @Expose()
-    image: string;
-
     @Type(() => AuthorDto)
     author: AuthorDto;
 

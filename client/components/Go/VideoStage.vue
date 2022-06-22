@@ -1,11 +1,22 @@
 <template>
-    <iframe @mouseover="play()" width="100%" height="300" :src="computedSrc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
+    <iframe width="100%" height="300" :src="computedSrc" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>  
 </template>
 
 <script>
 export default {
     mounted(){
         window.focus()
+        let ctx = this
+        window.onblur = function(){
+            var monitor = setInterval(function(){
+                var elem = document.activeElement;
+                console.log(elem)
+                if(elem && elem.tagName == 'IFRAME'){
+                    setTimeout(()=>{ctx.$emit('stageComplete')}, 7000)
+                    clearInterval(monitor)
+                }
+            }, 100)
+        }
     },
     props:{
         url:{
@@ -13,11 +24,10 @@ export default {
             required: true
         }
     },
+    destroyed() {
+        window.onblur = function(){}
+    },
     methods: {
-        play(e){
-            const ctx = this
-            setTimeout(()=>{ctx.$emit('stageComplete')}, 7000)
-        }
     },
     computed:{
         computedSrc(){

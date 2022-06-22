@@ -2,13 +2,14 @@
     <div>
       <Header title='Авторизация'/>
       <v-main class="pa-2 d-flex h-80 align-center mt-4">
-        <LoginForm @submit="submit"/>
+        <LoginForm :error="error" @submit="submit"/>
       </v-main>
     </div>
 </template>
 
 
 <script>
+import { setItem, getItem } from '~/helpers/persistanceStorage'
 import Header from '~/components/UI/Header'
 import Quest from '~/components/Quest'
 import LoginForm from '~/components/auth/loginForm'
@@ -21,12 +22,18 @@ export default {
   },
   data(){
     return{
-      search: ''
+      error: false
     }
   },
   methods: {
     submit(user){
-        console.log(user)
+      this.$store.dispatch('auth/logIn', user)
+        .then(user=>{
+          this.error = false
+          this.$router.push('/')
+        })
+        .catch(err=>this.error=err)
+      console.log(user)
     }
   },
   computed:{
@@ -36,7 +43,7 @@ export default {
 </script>
 
 <style>
-    .h-80{
-        height: 80vh !important;
-    }
+  .h-80{
+    height: 80vh !important;
+  }
 </style>

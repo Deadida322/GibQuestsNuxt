@@ -50,7 +50,7 @@ export default {
         this.id = this.$route.params.id
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
-        console.log(this.stage, this.quest)
+        if(this.stage && this.stage.type !='Текст') this.$router.go(-1)
     },
     data(){
         return{

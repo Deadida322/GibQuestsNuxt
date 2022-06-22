@@ -2,7 +2,7 @@
     <div>
       <Header title='Авторизация'/>
       <v-main class="pa-2 d-flex h-80 align-center mt-4">
-        <RegForm @submit="submit"/>
+        <RegForm :error="error" @submit="submit"/>
       </v-main>
     </div>
 </template>
@@ -21,11 +21,17 @@ export default {
   },
   data(){
     return{
-      search: ''
+      error: false
     }
   },
   methods: {
     submit(user){
+      this.$store.dispatch('auth/register', user)
+        .then((res)=>{
+          this.error = false
+          this.$router.push('/login')
+        })
+        .catch(err=>this.error=err)
       console.log(user)
     }
   },

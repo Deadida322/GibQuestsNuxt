@@ -45,7 +45,7 @@ import MapStage from '~/components/Go/MapStage'
 import QRStage from '~/components/Go/QRStage'
 import TestStage from '~/components/Go/TestStage'
 import Progress from '~/components/Go/Progress'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 
 export default {
     components:{
@@ -56,6 +56,9 @@ export default {
         QRStage,
         TestStage,
         Progress
+    },
+    created(){
+        if(!this.isLoggedIn) this.$router.push('/login')
     },
     data(){
         return{
@@ -77,6 +80,7 @@ export default {
         }
     },
     computed:{
+        ...mapState('auth', ['isLoggedIn']),
         ...mapGetters('quests', ['getCurrent']),
         currentStage() {
             const stage = this.getCurrent.stages[this.currentStageNumber]

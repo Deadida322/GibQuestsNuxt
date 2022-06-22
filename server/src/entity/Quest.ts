@@ -23,7 +23,7 @@ export class Quest {
 
     @Column({
         type: "text",
-        nullable: false
+        nullable: true
     })
     image: string
 
