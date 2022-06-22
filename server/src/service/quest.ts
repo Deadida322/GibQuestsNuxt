@@ -167,6 +167,22 @@ export class QuestService {
 
     }
 
+    public static async getProcess(userId: number, questId: number): Promise<Quest_User> {
+        const questRep = AppDataSource.getRepository(Quest);
+        const userRep = AppDataSource.getRepository(User);
+        const questUserRep = AppDataSource.getRepository(Quest_User);
+
+        const user = await userRep.findOneBy({id:userId})
+        const quest = await questRep.findOneBy({id:questId})
+        if(!user || !quest) {
+            throw new NotFoundError('Пользователь или квест');
+        }
+        return await questUserRep.findOneBy({user, quest})
+        
+     
+
+    }
+
     public static async track(userId: number, questId: number): Promise<Quest_User[]> {
         const questRep = AppDataSource.getRepository(Quest);
         const userRep = AppDataSource.getRepository(User);
@@ -244,11 +260,9 @@ export class QuestService {
 
     }
 
+
     public static async deleteQuest(id: number): Promise<any> {
         const questRep = AppDataSource.getRepository(Quest);
-        // const userRep = AppDataSource.getRepository(User);
-        // const questUserRep = AppDataSource.getRepository(Quest_User);
-        
         return await questRep.delete(id)
 
     }
