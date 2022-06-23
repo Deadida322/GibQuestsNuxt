@@ -8,16 +8,12 @@ import { StageDto, QuestionDto } from '../controllers/dto';
 import { StageActionMapDto, StageActionMediaDto, StageActionQrDto, StageActionTextDto } from '../controllers/dto/StageActionDto';
 import { Stage_Test } from '../entity/Stage_Test';
 import { Question } from '../entity/Question';
-import { Answer } from '../entity/Answer';
-import { RightAnswer } from '../entity/RightAnswer';
 import { Stage_Action } from '../entity/Stage_Action';
 import { Quest_User } from '../entity/Quest_User';
 import * as QRCode from 'qrcode';
 
 async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
     const questionRep = AppDataSource.getRepository(Question);
-    const answerRep = AppDataSource.getRepository(Answer);
-    const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
 
     let question = new Question()
     
@@ -25,19 +21,22 @@ async function saveQuestion(q: QuestionDto, stageTest: Stage_Test) {
     question.contain = q.contain
     question.type = q.type
     question.stageTest = stageTest
+    question.rightAnswer = q.rightAnswer
+    question.answers = q.answers
     const saveQuest = await questionRep.save(question)
-    q.answers.forEach(a => {
-        let answer = new Answer()
-        answer.question = question
-        answer.value = a.value
-        answerRep.save(answer)
-    })
-    q.rightAnswers.forEach(r => {
-        let rightAnswer = new RightAnswer()
-        rightAnswer.question = question
-        rightAnswer.value = r.value
-        rightAnswerRep.save(rightAnswer)
-    })
+    
+    // q.answers.forEach(a => {
+    //     let answer = new Answer()
+    //     answer.question = question
+    //     answer.value = a.value
+    //     answerRep.save(answer)
+    // })
+    // q.rightAnswers.forEach(r => {
+    //     let rightAnswer = new RightAnswer()
+    //     rightAnswer.question = question
+    //     rightAnswer.value = r.value
+    //     rightAnswerRep.save(rightAnswer)
+    // })
 }
 
 export class QuestService {
@@ -220,8 +219,8 @@ export class QuestService {
             .leftJoinAndSelect("stage.stageAction", "stage_action")
             .leftJoinAndSelect("stage.stageTest", "stage_test")
             .leftJoinAndSelect("stage_test.questions", "question")
-            .leftJoinAndSelect("question.answer", "answer")
-            .leftJoinAndSelect("question.rightAnswer", "right_answer")
+            // .leftJoinAndSelect("question.answer", "answer")
+            // .leftJoinAndSelect("question.rightAnswer", "right_answer")
             .getOne()
 
             return quest
@@ -235,8 +234,8 @@ export class QuestService {
            .leftJoinAndSelect("stage.stageAction", "stage_action")
            .leftJoinAndSelect("stage.stageTest", "stage_test")
            .leftJoinAndSelect("stage_test.questions", "question")
-           .leftJoinAndSelect("question.answer", "answer")
-           .leftJoinAndSelect("question.rightAnswer", "right_answer")
+        //    .leftJoinAndSelect("question.answer", "answer")
+        //    .leftJoinAndSelect("question.rightAnswer", "right_answer")
            .getMany()
 
            return quests
@@ -251,8 +250,8 @@ export class QuestService {
             .leftJoinAndSelect("stage.stageAction", "stage_action")
             .leftJoinAndSelect("stage.stageTest", "stage_test")
             .leftJoinAndSelect("stage_test.questions", "question")
-            .leftJoinAndSelect("question.answer", "answer")
-            .leftJoinAndSelect("question.rightAnswer", "right_answer")
+            // .leftJoinAndSelect("question.answer", "answer")
+            // .leftJoinAndSelect("question.rightAnswer", "right_answer")
             .getMany()
 
             return quest

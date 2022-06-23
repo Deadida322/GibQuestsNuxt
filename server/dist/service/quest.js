@@ -45,40 +45,39 @@ var data_source_1 = require("../data-source");
 var Stage_1 = require("../entity/Stage");
 var Stage_Test_1 = require("../entity/Stage_Test");
 var Question_1 = require("../entity/Question");
-var Answer_1 = require("../entity/Answer");
-var RightAnswer_1 = require("../entity/RightAnswer");
 var Stage_Action_1 = require("../entity/Stage_Action");
 var Quest_User_1 = require("../entity/Quest_User");
 var QRCode = require("qrcode");
 function saveQuestion(q, stageTest) {
     return __awaiter(this, void 0, void 0, function () {
-        var questionRep, answerRep, rightAnswerRep, question, saveQuest;
+        var questionRep, question, saveQuest;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     questionRep = data_source_1.AppDataSource.getRepository(Question_1.Question);
-                    answerRep = data_source_1.AppDataSource.getRepository(Answer_1.Answer);
-                    rightAnswerRep = data_source_1.AppDataSource.getRepository(RightAnswer_1.RightAnswer);
                     question = new Question_1.Question();
                     question.number = q.number;
                     question.contain = q.contain;
                     question.type = q.type;
                     question.stageTest = stageTest;
-                    return [4 /*yield*/, questionRep.save(question)];
+                    question.rightAnswer = q.rightAnswer;
+                    question.answers = q.answers;
+                    return [4 /*yield*/, questionRep.save(question)
+                        // q.answers.forEach(a => {
+                        //     let answer = new Answer()
+                        //     answer.question = question
+                        //     answer.value = a.value
+                        //     answerRep.save(answer)
+                        // })
+                        // q.rightAnswers.forEach(r => {
+                        //     let rightAnswer = new RightAnswer()
+                        //     rightAnswer.question = question
+                        //     rightAnswer.value = r.value
+                        //     rightAnswerRep.save(rightAnswer)
+                        // })
+                    ];
                 case 1:
                     saveQuest = _a.sent();
-                    q.answers.forEach(function (a) {
-                        var answer = new Answer_1.Answer();
-                        answer.question = question;
-                        answer.value = a.value;
-                        answerRep.save(answer);
-                    });
-                    q.rightAnswers.forEach(function (r) {
-                        var rightAnswer = new RightAnswer_1.RightAnswer();
-                        rightAnswer.question = question;
-                        rightAnswer.value = r.value;
-                        rightAnswerRep.save(rightAnswer);
-                    });
                     return [2 /*return*/];
             }
         });
@@ -318,8 +317,8 @@ var QuestService = /** @class */ (function () {
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
                                         .leftJoinAndSelect("stage_test.questions", "question")
-                                        .leftJoinAndSelect("question.answer", "answer")
-                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        // .leftJoinAndSelect("question.answer", "answer")
+                                        // .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getOne()];
                                 case 1:
                                     quest = _a.sent();
@@ -343,8 +342,8 @@ var QuestService = /** @class */ (function () {
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
                                         .leftJoinAndSelect("stage_test.questions", "question")
-                                        .leftJoinAndSelect("question.answer", "answer")
-                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        //    .leftJoinAndSelect("question.answer", "answer")
+                                        //    .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getMany()];
                                 case 1:
                                     quests = _a.sent();
@@ -369,8 +368,8 @@ var QuestService = /** @class */ (function () {
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
                                         .leftJoinAndSelect("stage_test.questions", "question")
-                                        .leftJoinAndSelect("question.answer", "answer")
-                                        .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        // .leftJoinAndSelect("question.answer", "answer")
+                                        // .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getMany()];
                                 case 1:
                                     quest = _a.sent();

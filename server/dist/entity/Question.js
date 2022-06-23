@@ -11,9 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Question = exports.QuestionEnumArray = void 0;
 var typeorm_1 = require("typeorm");
-var Answer_1 = require("./Answer");
 var Stage_Test_1 = require("./Stage_Test");
-var RightAnswer_1 = require("./RightAnswer");
 exports.QuestionEnumArray = ['Множественный выбор', 'Выбор', 'Вписать ответ', 'Расположить по порядку'];
 var Question = /** @class */ (function () {
     function Question() {
@@ -46,15 +44,20 @@ var Question = /** @class */ (function () {
     ], Question.prototype, "type", void 0);
     __decorate([
         (0, typeorm_1.ManyToOne)(function () { return Stage_Test_1.Stage_Test; }, function (stageTest) { return stageTest.questions; }, { onDelete: "CASCADE" }),
-        __metadata("design:type", Stage_Test_1.Stage_Test)
+        __metadata("design:type", Stage_Test_1.Stage_Test
+        // @OneToMany(() => Answer, (answer) => answer.question, {cascade: true})
+        // answer: Answer
+        // @OneToMany(() => RightAnswer, (rightAnswer) => rightAnswer.question, {cascade: true})
+        // rightAnswer: RightAnswer
+        )
     ], Question.prototype, "stageTest", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return Answer_1.Answer; }, function (answer) { return answer.question; }, { cascade: true }),
-        __metadata("design:type", Answer_1.Answer)
-    ], Question.prototype, "answer", void 0);
+        (0, typeorm_1.Column)({ type: "text", array: true }),
+        __metadata("design:type", Object)
+    ], Question.prototype, "answers", void 0);
     __decorate([
-        (0, typeorm_1.OneToMany)(function () { return RightAnswer_1.RightAnswer; }, function (rightAnswer) { return rightAnswer.question; }, { cascade: true }),
-        __metadata("design:type", RightAnswer_1.RightAnswer)
+        (0, typeorm_1.Column)({ type: "text", array: true }),
+        __metadata("design:type", Object)
     ], Question.prototype, "rightAnswer", void 0);
     Question = __decorate([
         (0, typeorm_1.Entity)()
