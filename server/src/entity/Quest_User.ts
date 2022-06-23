@@ -13,10 +13,10 @@ export class Quest_User {
     })
     progress: number
 
-    @ManyToOne(() => User, (user) => user.quest_user)
+    @ManyToOne(() => User, (user) => user.quest_user, {onDelete: "CASCADE"})
     user: User
 
-    @ManyToOne(() => Quest, (quest) => quest.quest_user)
+    @ManyToOne(() => Quest, (quest) => quest.quest_user, {onDelete: "CASCADE"})
     quest: Quest
 
 }
