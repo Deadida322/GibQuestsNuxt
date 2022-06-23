@@ -388,9 +388,9 @@ var QuestService = /** @class */ (function () {
                         var quest;
                         return __generator(this, function (_a) {
                             switch (_a.label) {
-                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(User_1.User).createQueryBuilder('user')
-                                        .leftJoinAndSelect("user.quest_user", "quest_user")
-                                        .where("quest_user.questId = :id", { id: id })
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(Quest_User_1.Quest_User).createQueryBuilder('questUser')
+                                        .leftJoinAndSelect("questUser.user", "user")
+                                        .where("questUser.questId = :id", { id: id })
                                         // .leftJoinAndSelect("question.answer", "answer")
                                         // .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getMany()];
