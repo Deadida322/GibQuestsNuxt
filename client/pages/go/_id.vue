@@ -8,8 +8,11 @@
                 </v-icon>
             </v-col>
             <v-col class="col text-h5 col-4">
-                <v-card class="rounded-pill grey lighten-4">
+                <v-card v-if="currentStage" class="rounded-pill grey lighten-4">
                     Этап <span class="primary--text">{{currentStageNumber+1}}</span>
+                </v-card>
+                <v-card v-else class="rounded-pill grey lighten-4">
+                   <span class="primary--text">Всё!</span>
                 </v-card>
             </v-col>
             <v-col class="col col-2"></v-col>
@@ -20,16 +23,32 @@
                 <div class="primary--text pa-2 text-h6 text-center">
                     {{currentStage.name}}
                 </div>
-                <VideoStage @stageComplete="stageComplete" v-if="currentStage.stageAction && currentStage.stageAction.url" :url="currentStage.stageAction.url"/>
-                <TextStage v-if="currentStage.stageAction && currentStage.stageAction.text" :text="currentStage.stageAction.text"/>
+                <VideoStage 
+                    @stageComplete="stageComplete" 
+                    v-if="currentStage.stageAction && 
+                    currentStage.stageAction.url" 
+                    :url="currentStage.stageAction.url"/>
+                <TextStage 
+                    v-if="currentStage.stageAction 
+                    && currentStage.stageAction.text" 
+                    :text="currentStage.stageAction.text"/>
                 <MapStage 
-                    v-if="currentStage.stageAction && currentStage.stageAction.lat"  
+                    v-if="currentStage.stageAction && 
+                    currentStage.stageAction.lat"  
                     :key="currentStageNumber+1" 
                     @stageComplete="stageComplete"
                     :goalLat="currentStage.stageAction.lat" 
                     :goalLong="currentStage.stageAction.long"/>
-                <QRStage v-if="currentStage.stageAction && currentStage.stageAction.to" @stageComplete="stageComplete" :codeWord="currentStage.stageAction.to"/>
-                <TestStage v-if="currentStage.stageTest && currentStage.stageTest.questions"  @stageComplete="stageComplete" :questions="currentStage.testStage.questions"/>
+                <QRStage 
+                    v-if="currentStage.stageAction && 
+                    currentStage.stageAction.to" 
+                    @stageComplete="stageComplete" 
+                    :codeWord="currentStage.stageAction.to"/>
+                <TestStage 
+                    v-if="currentStage.stageTest && 
+                    currentStage.stageTest.questions"  
+                    @stageComplete="stageComplete" 
+                    :questions="currentStage.stageTest.questions"/>
                 <v-card-actions>
                     <v-btn :disabled="!currentStageNumber" @click="previousStage" dark color="blue">Назад</v-btn>
                     <v-spacer></v-spacer>
@@ -37,7 +56,19 @@
                 </v-card-actions>   
             </v-card>
         </v-main>
-        <Progress :goal="quest.stages && quest.stages.length" :current="currentStageNumber"/>
+        <v-container v-else class="d-flex align-center flex-column justify-center w-100">
+            <v-btn large to="/" fab color="success">
+                <v-icon>
+                    mdi-check
+                </v-icon>
+            </v-btn>
+            <div class="text-h3">
+                Ты умница!
+            </div>
+        </v-container>
+        <Progress 
+            :goal="quest.stages && quest.stages.length" 
+            :current="currentStageNumber >= quest.stages.length ? quest.stages.length-1 : currentStageNumber"/>
     </div>
 </template>
 

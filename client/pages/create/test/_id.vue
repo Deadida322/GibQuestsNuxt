@@ -62,7 +62,6 @@ export default {
             }
             this.stage.test.questions = this.currentTest
             this.quest.stages[this.id] = this.stage
-            console.log(this.stage, 'test такой вот')
             this.$store.commit('create/setCurrentQuest', this.quest)
             this.snackbar = true
         },

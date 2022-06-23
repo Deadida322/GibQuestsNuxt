@@ -15,6 +15,12 @@
         </template>
         <v-list>
             <v-list-item-group>
+                <v-list-item :to="`/watch/${id}`" color="blue">
+                    <v-list-item-icon>
+                        <v-icon color="blue">mdi-eye</v-icon>
+                    </v-list-item-icon>
+                    <v-list-item-title>Отслеживать</v-list-item-title>
+                </v-list-item>
                 <v-list-item :to="`/create/${id}`" color="primary">
                     <v-list-item-icon>
                         <v-icon color="primary">mdi-pencil</v-icon>

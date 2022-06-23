@@ -187,7 +187,8 @@ export default {
             ],
             typeRules: [val => (val || '').length > 0 || 'This field is required'],
             questions: [],
-            currentDrag: 0
+            currentDrag: 0,
+            tt: 0
         }
     },
     beforeMount() {
@@ -207,6 +208,7 @@ export default {
             console.log(this.currentDrag)
             let i = this.currentDrag
             this.questions[i].answers = applyDrag(this.questions[i].answers, dropResult);
+            this.questions[i].rightAnswer = this.questions[i].answers 
             console.log("drop result ", this.questions[i].answers);
         },
         setCurrentDrag(index){
