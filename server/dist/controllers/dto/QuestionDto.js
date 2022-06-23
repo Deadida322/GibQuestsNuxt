@@ -12,8 +12,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.QuestionDto = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
-var RightAnswerDto_1 = require("./RightAnswerDto");
-var AnswerDto_1 = require("./AnswerDto");
 var QuestionDto = /** @class */ (function () {
     function QuestionDto() {
     }
@@ -34,14 +32,14 @@ var QuestionDto = /** @class */ (function () {
     ], QuestionDto.prototype, "type", void 0);
     __decorate([
         (0, class_validator_1.IsDefined)(),
-        (0, class_transformer_1.Type)(function () { return AnswerDto_1.AnswerDto; }),
+        (0, class_transformer_1.Expose)(),
         __metadata("design:type", Array)
     ], QuestionDto.prototype, "answers", void 0);
     __decorate([
         (0, class_validator_1.IsDefined)(),
-        (0, class_transformer_1.Type)(function () { return RightAnswerDto_1.RightAnswerDto; }),
+        (0, class_transformer_1.Expose)(),
         __metadata("design:type", Array)
-    ], QuestionDto.prototype, "rightAnswers", void 0);
+    ], QuestionDto.prototype, "rightAnswer", void 0);
     return QuestionDto;
 }());
 exports.QuestionDto = QuestionDto;

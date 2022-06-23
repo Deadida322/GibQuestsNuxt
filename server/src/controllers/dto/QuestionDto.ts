@@ -21,12 +21,20 @@ export abstract class QuestionDto {
     type: QuestionEnum;
 
     // type: type
-    @IsDefined()
-    @Type(() => AnswerDto)
-    answers: AnswerDto[];
+    // @IsDefined()
+    // @Type(() => AnswerDto)
+    // answers: AnswerDto[];
+
+    // @IsDefined()
+    // @Type(() => RightAnswerDto)
+    // rightAnswers: RightAnswerDto[];
 
     @IsDefined()
-    @Type(() => RightAnswerDto)
-    rightAnswers: RightAnswerDto[];
+    @Expose()
+    answers: string[];
+
+    @IsDefined()
+    @Expose()
+    rightAnswer: string[];
 }
  
