@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getQR = exports.getImage = exports.updateImage = exports.trackQuest = exports.getProcessQuest = exports.processQuest = exports.deleteQuest = exports.create = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
+exports.getQR = exports.getImage = exports.updateImage = exports.trackQuest = exports.getProcessQuest = exports.processQuest = exports.deleteQuest = exports.create = exports.getCreatedQuest = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
@@ -103,6 +103,26 @@ function getCreatedQuests(request, response) {
     });
 }
 exports.getCreatedQuests = getCreatedQuests;
+function getCreatedQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.id) {
+                        response.json((0, utils_1.error)('Введите query параметр id квеста'));
+                        return [2 /*return*/];
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.getCreatedQuest(+request.query.id)];
+                case 1:
+                    res = _a.sent();
+                    res ? response.json((0, utils_1.ok)(res)) : response.json((0, utils_1.error)('Не существует записей с таким id квеста'));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getCreatedQuest = getCreatedQuest;
 function create(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var quest, errors, res;

@@ -85,6 +85,11 @@ var AppRoutes = [
         method: "get",
         action: controllers_1.quest.getQR
     },
+    {
+        path: "/getCreatedQuest",
+        method: "get",
+        action: controllers_1.quest.getCreatedQuest
+    },
 ];
 function initRoutes(app) {
     AppRoutes.forEach(function (route) {
