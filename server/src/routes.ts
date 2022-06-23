@@ -85,7 +85,11 @@ const AppRoutes: Route[] = [
     method: "get",
     action: quest.getQR
   },
-
+  {
+    path: "/getCreatedQuest",
+    method: "get",
+    action: quest.getCreatedQuest
+  },
   
    
 ];

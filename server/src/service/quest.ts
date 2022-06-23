@@ -258,6 +258,20 @@ export class QuestService {
         });
 
     }
+    public static async getCreatedQuest( id: number): Promise<any> {
+  
+        return catchOrmErrors(async () => {
+                const quest = await AppDataSource.getRepository(Quest_User).createQueryBuilder('questUser')
+                .leftJoinAndSelect("questUser.user", "user")
+                .where("questUser.questId = :id", {id: id})
+                // .leftJoinAndSelect("question.answer", "answer")
+                // .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                .getMany()
+    
+                return quest
+            });
+    
+        }
 
 
     public static async deleteQuest(id: number): Promise<any> {

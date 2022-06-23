@@ -380,6 +380,29 @@ var QuestService = /** @class */ (function () {
             });
         });
     };
+    QuestService.getCreatedQuest = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var _this = this;
+            return __generator(this, function (_a) {
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var quest;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, data_source_1.AppDataSource.getRepository(User_1.User).createQueryBuilder('user')
+                                        .leftJoinAndSelect("user.quest_user", "quest_user")
+                                        .where("quest_user.questId = :id", { id: id })
+                                        // .leftJoinAndSelect("question.answer", "answer")
+                                        // .leftJoinAndSelect("question.rightAnswer", "right_answer")
+                                        .getMany()];
+                                case 1:
+                                    quest = _a.sent();
+                                    return [2 /*return*/, quest];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
     QuestService.deleteQuest = function (id) {
         return __awaiter(this, void 0, void 0, function () {
             var questRep;

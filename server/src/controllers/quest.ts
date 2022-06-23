@@ -37,6 +37,16 @@ export async function getCreatedQuests(request: Request, response: Response) {
     res ? response.json(ok(res)) : response.json(error('Не существует записей с таким автором'))  
 }
 
+export async function getCreatedQuest(request: Request, response: Response) {
+    if (!request.query.id) {
+        response.json(error('Введите query параметр id квеста'))
+        return;
+    }
+
+    const res = await QuestService.getCreatedQuest(+request.query.id)
+    res ? response.json(ok(res)) : response.json(error('Не существует записей с таким id квеста'))  
+}
+
 export async function create(request: Request, response: Response) {
     const quest = plainToClass(QuestDto, request.body);
     const errors = await validate(quest, { skipMissingProperties: true });
