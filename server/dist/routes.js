@@ -41,6 +41,11 @@ var AppRoutes = [
         action: controllers_1.quest.processQuest
     },
     {
+        path: "/getProcessQuest",
+        method: "get",
+        action: controllers_1.quest.getProcessQuest
+    },
+    {
         path: "/trackQuest",
         method: "get",
         action: controllers_1.quest.trackQuest
@@ -61,6 +66,11 @@ var AppRoutes = [
         action: controllers_1.quest.getQuests
     },
     {
+        path: "/deleteQuest",
+        method: "delete",
+        action: controllers_1.quest.deleteQuest
+    },
+    {
         path: "/getCreatedQuests",
         method: "get",
         action: controllers_1.quest.getCreatedQuests
@@ -69,6 +79,11 @@ var AppRoutes = [
         path: "/getImage",
         method: "get",
         action: controllers_1.quest.getImage
+    },
+    {
+        path: "/getQr",
+        method: "get",
+        action: controllers_1.quest.getQR
     },
 ];
 function initRoutes(app) {

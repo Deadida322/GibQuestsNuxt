@@ -147,7 +147,7 @@ var QuestService = /** @class */ (function () {
                                                             return [4 /*yield*/, QRCode.toDataURL(word, function (err, src) {
                                                                     if (err) {
                                                                         console.log(err);
-                                                                        throw new Error(err);
+                                                                        throw new error_1.UnexpectedDBError();
                                                                     }
                                                                     stageAction_1.to = src;
                                                                 })];
@@ -236,6 +236,30 @@ var QuestService = /** @class */ (function () {
             });
         });
     };
+    QuestService.getProcess = function (userId, questId) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep, userRep, questUserRep, user, quest;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                        userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                        questUserRep = data_source_1.AppDataSource.getRepository(Quest_User_1.Quest_User);
+                        return [4 /*yield*/, userRep.findOneBy({ id: userId })];
+                    case 1:
+                        user = _a.sent();
+                        return [4 /*yield*/, questRep.findOneBy({ id: questId })];
+                    case 2:
+                        quest = _a.sent();
+                        if (!user || !quest) {
+                            throw new error_1.NotFoundError('Пользователь или квест');
+                        }
+                        return [4 /*yield*/, questUserRep.findOneBy({ user: user, quest: quest })];
+                    case 3: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
     QuestService.track = function (userId, questId) {
         return __awaiter(this, void 0, void 0, function () {
             var questRep, userRep, questUserRep, author, quest;
@@ -293,7 +317,7 @@ var QuestService = /** @class */ (function () {
                                         .where("quest.id = :id", { id: id })
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
-                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("stage_test.questions", "question")
                                         .leftJoinAndSelect("question.answer", "answer")
                                         .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getOne()];
@@ -318,7 +342,7 @@ var QuestService = /** @class */ (function () {
                                         .leftJoinAndSelect("quest.stages", "stage")
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
-                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("stage_test.questions", "question")
                                         .leftJoinAndSelect("question.answer", "answer")
                                         .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getMany()];
@@ -344,7 +368,7 @@ var QuestService = /** @class */ (function () {
                                         .where("quest.authorId = :id", { id: id })
                                         .leftJoinAndSelect("stage.stageAction", "stage_action")
                                         .leftJoinAndSelect("stage.stageTest", "stage_test")
-                                        .leftJoinAndSelect("stage_test.question", "question")
+                                        .leftJoinAndSelect("stage_test.questions", "question")
                                         .leftJoinAndSelect("question.answer", "answer")
                                         .leftJoinAndSelect("question.rightAnswer", "right_answer")
                                         .getMany()];
@@ -354,6 +378,33 @@ var QuestService = /** @class */ (function () {
                             }
                         });
                     }); })];
+            });
+        });
+    };
+    QuestService.deleteQuest = function (id) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                        return [4 /*yield*/, questRep.delete(id)];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    QuestService.getQR = function (word) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                return [2 /*return*/, new Promise(function (resolve, reject) {
+                        QRCode.toDataURL(word, function (err, src) {
+                            if (err) {
+                                return reject('Ошибка при создании qr кода');
+                            }
+                            return resolve(src);
+                        });
+                    })];
             });
         });
     };

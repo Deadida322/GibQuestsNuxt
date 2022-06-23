@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getImage = exports.updateImage = exports.trackQuest = exports.processQuest = exports.create = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
+exports.getQR = exports.getImage = exports.updateImage = exports.trackQuest = exports.getProcessQuest = exports.processQuest = exports.deleteQuest = exports.create = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
@@ -47,6 +47,7 @@ var fs = require("fs");
 var path = require("path");
 var get_base_url_1 = require("get-base-url");
 var crypto = require("crypto");
+var config = require("config");
 function getQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
         var res;
@@ -125,9 +126,36 @@ function create(request, response) {
     });
 }
 exports.create = create;
+function deleteQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, e_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.id) {
+                        response.json((0, utils_1.error)('Введите query параметр id квеста'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, quest_1.QuestService.deleteQuest(+request.query.id)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_1 = _a.sent();
+                    response.json((0, utils_1.error)(e_1.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.deleteQuest = deleteQuest;
 function processQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var processQuestDto, errors, res, e_1;
+        var processQuestDto, errors, res, e_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -147,8 +175,8 @@ function processQuest(request, response) {
                     response.json((0, utils_1.ok)(res));
                     return [3 /*break*/, 5];
                 case 4:
-                    e_1 = _a.sent();
-                    response.json((0, utils_1.error)(e_1.message));
+                    e_2 = _a.sent();
+                    response.json((0, utils_1.error)(e_2.message));
                     return [3 /*break*/, 5];
                 case 5: return [2 /*return*/];
             }
@@ -156,9 +184,39 @@ function processQuest(request, response) {
     });
 }
 exports.processQuest = processQuest;
+function getProcessQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, e_3;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.userId) {
+                        response.json((0, utils_1.error)('Введите query параметр userId'));
+                    }
+                    if (!request.query.questId) {
+                        response.json((0, utils_1.error)('Введите query параметр questId'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, quest_1.QuestService.getProcess(+request.query.userId, +request.query.questId)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_3 = _a.sent();
+                    response.json((0, utils_1.error)(e_3.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getProcessQuest = getProcessQuest;
 function trackQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var res, e_2;
+        var res, e_4;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -174,8 +232,8 @@ function trackQuest(request, response) {
                     response.json((0, utils_1.ok)(res));
                     return [3 /*break*/, 4];
                 case 3:
-                    e_2 = _a.sent();
-                    response.json((0, utils_1.error)(e_2.message));
+                    e_4 = _a.sent();
+                    response.json((0, utils_1.error)(e_4.message));
                     return [3 /*break*/, 4];
                 case 4: return [2 /*return*/];
             }
@@ -185,7 +243,7 @@ function trackQuest(request, response) {
 exports.trackQuest = trackQuest;
 function updateImage(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var documentFile, hash, pathImage, pathToClient, res, e_3;
+        var documentFile, hash, pathImage, oldQuest, parsePath, oldPath, pathToClient, res, e_5;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -194,30 +252,40 @@ function updateImage(request, response) {
                     }
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 5, , 6]);
+                    _a.trys.push([1, 6, , 7]);
                     documentFile = request.files;
                     return [4 /*yield*/, crypto.createHash('md5').update(Date.now().toString()).digest('hex')];
                 case 2:
                     hash = _a.sent();
-                    pathImage = path.join(__dirname, '../image', "".concat(hash, ".png"));
+                    pathImage = path.join(__dirname, '../images', "".concat(hash, ".png"));
                     return [4 /*yield*/, fs.writeFileSync(pathImage, documentFile.image.data)];
                 case 3:
                     _a.sent();
                     if (!fs.existsSync(pathImage)) {
                         response.json((0, utils_1.error)('Ошибка при сохранении изображения'));
                     }
-                    pathToClient = path.join((0, get_base_url_1.getBaseUrl)(), '../img', "".concat(hash, ".png"));
-                    return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathToClient)];
+                    return [4 /*yield*/, quest_1.QuestService.getQuest(+request.query.id)];
                 case 4:
+                    oldQuest = _a.sent();
+                    if (oldQuest.image) {
+                        parsePath = oldQuest.image.split('/');
+                        oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1]);
+                        if (fs.existsSync(oldPath)) {
+                            fs.unlinkSync(oldPath);
+                        }
+                    }
+                    pathToClient = "".concat(config.get('protocol'), "://").concat((0, get_base_url_1.getBaseUrl)(), ":").concat(config.get('port'), "/img/").concat(hash, ".png");
+                    return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathToClient)];
+                case 5:
                     res = _a.sent();
                     response.json((0, utils_1.ok)(res));
-                    return [3 /*break*/, 6];
-                case 5:
-                    e_3 = _a.sent();
-                    console.log(e_3);
-                    response.json((0, utils_1.error)(e_3.message));
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 6:
+                    e_5 = _a.sent();
+                    console.log(e_5);
+                    response.json((0, utils_1.error)(e_5.message));
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -240,4 +308,31 @@ function getImage(request, response) {
     });
 }
 exports.getImage = getImage;
+function getQR(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var res, e_6;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    if (!request.query.word) {
+                        response.json((0, utils_1.error)('Введите query параметр word квеста'));
+                    }
+                    _a.label = 1;
+                case 1:
+                    _a.trys.push([1, 3, , 4]);
+                    return [4 /*yield*/, quest_1.QuestService.getQR(request.query.word)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [3 /*break*/, 4];
+                case 3:
+                    e_6 = _a.sent();
+                    response.json((0, utils_1.error)(e_6.message));
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.getQR = getQR;
 //# sourceMappingURL=quest.js.map

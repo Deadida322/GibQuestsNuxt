@@ -27,7 +27,7 @@ var Answer = /** @class */ (function () {
         __metadata("design:type", String)
     ], Answer.prototype, "value", void 0);
     __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return Question_1.Question; }, function (question) { return question.answer; }),
+        (0, typeorm_1.ManyToOne)(function () { return Question_1.Question; }, function (question) { return question.answer; }, { onDelete: "CASCADE" }),
         __metadata("design:type", Question_1.Question)
     ], Answer.prototype, "question", void 0);
     Answer = __decorate([

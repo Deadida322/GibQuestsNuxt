@@ -45,7 +45,7 @@ var Stage = /** @class */ (function () {
         __metadata("design:type", String)
     ], Stage.prototype, "name", void 0);
     __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return Quest_1.Quest; }, function (quest) { return quest.stages; }),
+        (0, typeorm_1.ManyToOne)(function () { return Quest_1.Quest; }, function (quest) { return quest.stages; }, { onDelete: "CASCADE" }),
         __metadata("design:type", Quest_1.Quest)
     ], Stage.prototype, "quest", void 0);
     __decorate([

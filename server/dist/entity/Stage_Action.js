@@ -54,7 +54,7 @@ var Stage_Action = /** @class */ (function () {
         __metadata("design:type", String)
     ], Stage_Action.prototype, "text", void 0);
     __decorate([
-        (0, typeorm_1.OneToOne)(function () { return Stage_1.Stage; }, function (stage) { return stage.stageAction; }),
+        (0, typeorm_1.OneToOne)(function () { return Stage_1.Stage; }, function (stage) { return stage.stageAction; }, { onDelete: "CASCADE" }),
         (0, typeorm_1.JoinColumn)(),
         __metadata("design:type", Stage_1.Stage)
     ], Stage_Action.prototype, "stage", void 0);

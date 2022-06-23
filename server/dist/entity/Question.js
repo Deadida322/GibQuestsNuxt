@@ -45,7 +45,7 @@ var Question = /** @class */ (function () {
         __metadata("design:type", String)
     ], Question.prototype, "type", void 0);
     __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return Stage_Test_1.Stage_Test; }, function (stageTest) { return stageTest.question; }),
+        (0, typeorm_1.ManyToOne)(function () { return Stage_Test_1.Stage_Test; }, function (stageTest) { return stageTest.questions; }, { onDelete: "CASCADE" }),
         __metadata("design:type", Stage_Test_1.Stage_Test)
     ], Question.prototype, "stageTest", void 0);
     __decorate([
