@@ -8,14 +8,14 @@
                 </v-icon>
             </v-col>
             <v-col class="col text-h5 col-4">
-                <v-card class="rounded-pill grey lighten-4">
-                    {{quest.name}}
-                </v-card>
+                <v-chip elevation="10" color="primary" class="rounded-pill grey lighten-4">
+                    {{quest.title}}
+                </v-chip>
             </v-col>
             <v-col class="col col-2"></v-col>
         </v-row>
-        <v-main class="pa-2 mt-4">
-            
+        <v-main v-if="quest.stages" class="pa-2 mt-4">
+            <User class="mb-2" v-for="item in users" :key="item.user.id" :user="item.user" :now="item.progress" :all="quest.stages.length"/>
         </v-main>
         
     </div>
@@ -25,22 +25,36 @@
 <script>
 import { mapGetters, mapState } from 'vuex'
 import Header from '~/components/UI/Header'
+import User from '~/components/watch/User.vue'
+import { setInterval } from 'timers';
 export default {
     created(){
         this.id=this.$route.params.id
-        this.$axios.get(`/getCreatedQuests?id?=${this.user.id}`).then(res=>{
-            this.quest = res.data
-            console.log(this.quest)
+        this.interval = setInterval(()=>{
+            this.$axios.get(`/getCreatedQuest?id=${this.id}`).then(res=>{
+                this.users = res.data.data
+            })
+        }, 2000)
+        
+        
+        this.$axios.get(`/getQuest?id=${this.id}`).then(res=>{
+            this.quest = res.data.data
         })
+    },
+    destroyed() {
+        clearInterval(this.interval)
     },
     data(){
         return{
             id: 0,
-            quest: {}
+            quest: {},
+            users: [],
+            interval: 0
         }
     },
     components:{
-       Header
+        Header,
+        User
     },
     computed:{
         ...mapState('auth', ['isLoggedIn', 'user']),

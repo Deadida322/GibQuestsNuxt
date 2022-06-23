@@ -56,8 +56,6 @@ export default {
         }
     },
     mounted(){
-        console.log(this.goalLat, this.goalLong)
-        console.log('mounted')
         function success(e) {
             const { latitude, longitude } = e.coords
             const position = [latitude, longitude]
@@ -69,7 +67,6 @@ export default {
             console.log(message) 
         }
         navigator.geolocation.getCurrentPosition(()=>{
-            console.log('Да БЛЯТЬЬ, ДА Я НЕ МОГУ')
         }, error, {
             enableHighAccuracy: true,
             timeout: 10000
@@ -81,7 +78,6 @@ export default {
         
     },
     destroyed() {
-        console.log('unmount')
         navigator.geolocation.clearWatch(this.geo)
     },
     props: {
@@ -106,7 +102,6 @@ export default {
         yourLat(){
             if(Math.abs(this.yourLat - this.goalLat)<1200){
                 this.latSuccess = true
-                console.log('asdasd');
             }
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
 
@@ -114,7 +109,6 @@ export default {
         yourLong(){
             if(Math.abs(this.yourLong - this.goalLong)<2000) {
                 this.longSuccess = true
-                console.log('asdasd');
             } 
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
             console.log(this.latSuccess, this.longSuccess );

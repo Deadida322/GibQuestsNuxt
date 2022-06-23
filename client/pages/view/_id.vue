@@ -7,7 +7,7 @@
             </v-icon>
         </div>
         <v-main class="pa-2 mt-4">
-            <v-img class="d-flex text-center align-center" gradient="to top right, rgba(0,0,0,.4), rgba(25,32,72,.6)" dark  :src="quest.image">
+            <v-img class="d-flex text-center align-center" max-height="400px" gradient="to top right, rgba(0,0,0,.4), rgba(25,32,72,.6)" dark  :src="quest.image">
                 <div class="text-h4">{{quest.title}}</div>
             </v-img>
             <v-card class="text-body-1 pa-2 mt-2" v-html="quest.description"/>
@@ -35,7 +35,6 @@ export default {
         this.id = this.$route.params.id
         this.$axios.get(`/getQuest?id=${this.id}`).then((res)=>{
             this.quest=res.data.data
-            console.log(this.quest, res)
         })
     },
     components:{

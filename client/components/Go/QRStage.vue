@@ -63,12 +63,10 @@ export default {
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
-            console.log(this.qr)
             QrScanner.scanImage(e)
                 .then(result => {
                     this.$router.push(`?q=${result}`)
                     this.loading = false
-                    console.log(result)
                     this.error = false
                     if(result==this.codeWord){
                         ctx.$emit('stageComplete')

@@ -21,7 +21,7 @@ exports.AppDataSource = new typeorm_1.DataSource({
     synchronize: true,
     logging: false,
     entities: exports.Entities,
-    migrations: [],
+    migrations: ["migration/*js"],
     subscribers: [],
 });
 //# sourceMappingURL=data-source.js.map

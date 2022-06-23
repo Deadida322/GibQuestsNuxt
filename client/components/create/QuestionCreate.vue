@@ -94,9 +94,9 @@
                         v-model="item.rightAnswer[0]"
                     ></v-text-field>
                 </div>
-                <div @mousedown="setCurrentDrag(index)" v-if="item.type=='Расположить по порядку'" class="selections">
+                <div @click="setCurrentDrag(index)" v-if="item.type=='Расположить по порядку'" class="selections">
                     <Container
-                        @drop="onDrop"
+                        @drop="onDrop({index, ...$event})"
                         orientation='vertical'
                     >
                         <Draggable 
@@ -205,14 +205,14 @@ export default {
             this.questions[i].answers.splice(j,1)
         },
         onDrop(dropResult) {
-            console.log(this.currentDrag)
-            let i = this.currentDrag
+            let i = dropResult.index
             this.questions[i].answers = applyDrag(this.questions[i].answers, dropResult);
             this.questions[i].rightAnswer = this.questions[i].answers 
-            console.log("drop result ", this.questions[i].answers);
+            console.log(this.questions[i])
         },
         setCurrentDrag(index){
             this.currentDrag = index
+            this.questions[index].rightAnswer = this.questions[i].answers
         },
         addQuestion(type){
             this.questions.push({

@@ -66,7 +66,6 @@ export default {
             this.snackbar = true
         },
         testChange(test){
-            console.log(test)
             this.currentTest = test
         }
     },

@@ -66,7 +66,6 @@
                     @stageChange="stageChange($event, idx)"
                 />
             </wrapper>
-            
             <v-alert
                 class="mt-2"
                 border="top"
@@ -118,6 +117,7 @@ import wrapper from '~/components/UI/wrapper'
 
 export default {
     mixins: [validationMixin],
+    layout: 'needToLog',
     validations: {
         quest: {
             title: { required, maxLength: maxLength(20) },
@@ -126,18 +126,15 @@ export default {
             stages: { required }
         }
     },
-    created(){
-        if(!this.isLoggedIn) this.$router.push('/login')
+    mounted(){
         this.currentId = this.$route.params.id
         this.quest = this.$store.getters['create/getCurrentQuest']
         if(this.currentId != 'new'){
-            console.log(this.quest)
             if(this.quest.id && this.quest.id!='new') return
             this.$axios.get(`/getQuest?id=${this.currentId}`).then(res=>{
                 this.quest = res.data.data
                 this.$store.commit('create/setCurrentQuest', this.quest)
                 this.background = this.quest.image
-                console.log(this.background)
             })
         }
         if(this.currentId!=this.quest.id){
@@ -173,14 +170,16 @@ export default {
     },
     methods: {
         search(e){
-            console.log(e)
         },
         stageChange(e, idx){
             this.myStagesErrors
             this.quest.stages[idx] = e
         },
         setImage(e){
-            this.quest.image = e
+            this.quest={
+                ...this.quest,
+                image: e
+            }
             let reader = new FileReader();
             reader.readAsDataURL(e);
             reader.onload = function () {
@@ -191,7 +190,6 @@ export default {
                 let data = new FormData()
                 data.append('image', e, e.name)
                 this.$axios.post(`/updateImage?id=${this.currentId}`, data).then((res)=>{
-                    console.log(res)
                 })
             }
         },
@@ -212,7 +210,6 @@ export default {
             this.$router.push(`/create/QR/${id}`)
         },
         addStage(type){
-            console.log(this.quest.stages)
             this.$v.quest.stages.$touch()
             let toPush =  {
                 number: this.quest.stages.length+1,
@@ -234,7 +231,6 @@ export default {
         },
         setQuest(){
             this.$v.quest.$touch()
-            console.log(this.$v.quest.image)
             if(!this.$v.quest.$anyError && this.summaryStagesErrors){
                 if(this.currentId=='new'){
                     this.$axios.post('/create', {
@@ -247,10 +243,9 @@ export default {
                         const e = this.quest.image
                         let data = new FormData()
                         data.append('image', e, e.name)
-                        this.$axios.post('/updateImage', data).then((res)=>{
+                        this.$axios.post(`/updateImage?id=${this.currentId}`, data).then((res)=>{
                             this.$router.push(`/create/${this.currentId}`)
                             this.$store.commit('create/setCurrentQuest', this.quest)
-
                         })
                     })
                 } else {
@@ -261,8 +256,6 @@ export default {
                         }
                     }).then(res=>{
                         this.currentId = res.data.data.id
-                        console.log(this.currentId)
-                        console.log(res)
                         this.$router.push(`/create/${this.currentId}`)
                     })
                 }

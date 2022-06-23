@@ -93,13 +93,29 @@ export default {
         TestStage,
         Progress
     },
+    created() {
+        if(!this.user.id) this.$router.push('/login')
+    },
     mounted(){
         this.id = this.$route.params.id
+       
         this.$axios.get(`/getQuest?id=${this.id}`).then((res)=>{
             this.quest=res.data.data
+            let data = {
+                userId: this.user.id,
+                questId: this.quest.id
+            }
+            this.$axios.post('/processQuest', data).then(res=>{
+            })
+            this.$axios.get(`/getProcessQuest?userId=${this.user.id}&questId=${this.quest.id}`)
+                .then(res=>{
+                    this.currentStageNumber=res.data.data.progress-1
+                })
         })
+        
 
     },
+    layout: 'needToLog',
     data(){
         return{
             quest: {},
@@ -114,15 +130,15 @@ export default {
         },
         nextStage(){
             this.showBtn = false
+            
+            this.currentStageNumber++
             let data = {
                 userId: this.user.id,
                 questId: this.quest.id,
                 progress: this.currentStageNumber
             }
             this.$axios.post('/processQuest', data).then(res=>{
-                console.log(res, 'потекло говно по трубам')
             })
-            this.currentStageNumber++
         },
         previousStage(){
             this.showBtn = true
@@ -139,7 +155,6 @@ export default {
             if(stage && stage.type === 'Текст') {
                 this.showBtn = true
             }
-            console.log(stage, 'текущий')
             return stage || false
         }
     }

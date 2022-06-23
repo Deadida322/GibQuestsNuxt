@@ -6,7 +6,6 @@
 export default {
     mounted(){
         window.focus()
-        console.log(this.url)
         let ctx = this
         window.onblur = function(){
             var monitor = setInterval(function(){
@@ -31,7 +30,6 @@ export default {
     },
     computed:{
         computedSrc(){
-            console.log(this.url)
             const viewCode = this.url.split('=')[1]
             return `https://www.youtube.com/embed/${viewCode}`
         }
