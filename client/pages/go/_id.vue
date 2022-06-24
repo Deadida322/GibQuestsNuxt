@@ -101,6 +101,7 @@ export default {
        
         this.$axios.get(`/getQuest?id=${this.id}`).then((res)=>{
             this.quest=res.data.data
+            this.quest.stages=this.quest.stages.sort((a,b)=>a.number-b.number)
             let data = {
                 userId: this.user.id,
                 questId: this.quest.id

@@ -133,6 +133,7 @@ export default {
             if(this.quest.id && this.quest.id!='new') return
             this.$axios.get(`/getQuest?id=${this.currentId}`).then(res=>{
                 this.quest = res.data.data
+                this.quest.stages=this.quest.stages.sort((a,b)=>a.number-b.number)
                 this.$store.commit('create/setCurrentQuest', this.quest)
                 this.background = this.quest.image
             })
