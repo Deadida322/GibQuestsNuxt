@@ -74,6 +74,12 @@ export default {
         this.geo = navigator.geolocation.watchPosition(success, error, {
             enableHighAccuracy: true
         })
+        delete Icon.Default.prototype._getIconUrl;
+        Icon.Default.mergeOptions({
+            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+            iconUrl: require('leaflet/dist/images/marker-icon.png'),
+            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+        });
       
         
     },
@@ -100,7 +106,7 @@ export default {
     },
     watch:{
         yourLat(){
-            log(Math.abs(this.yourLat - this.goalLat))
+            console.log(Math.abs(this.yourLat - this.goalLat))
             if(Math.abs(this.yourLat - this.goalLat)<0.0002000){
                 this.latSuccess = true
             }
