@@ -100,14 +100,17 @@ export default {
     },
     watch:{
         yourLat(){
-            if(Math.abs(this.yourLat - this.goalLat)<1200){
+            log(Math.abs(this.yourLat - this.goalLat))
+            if(Math.abs(this.yourLat - this.goalLat)<0.0002000){
                 this.latSuccess = true
             }
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
 
         },
         yourLong(){
-            if(Math.abs(this.yourLong - this.goalLong)<2000) {
+            console.log(this.yourLong - this.goalLong)
+
+            if(Math.abs(this.yourLong - this.goalLong)<0.0003000) {
                 this.longSuccess = true
             } 
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
