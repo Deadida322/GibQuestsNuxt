@@ -17,7 +17,7 @@
             </v-col>
             <v-col class="col col-2"></v-col>
         </v-row>
-        <v-main v-if="currentStage" class="pa-2 mt-4 mb-10">
+        <v-main v-if="currentStage" class="pa-2 mb-10">
             <v-card class="relative mb-4">
                 <v-chip small class="stage-chip">{{currentStage.type}}</v-chip>
                 <div class="primary--text pa-2 text-h6 text-center">
