@@ -52,3 +52,19 @@ body{
     position: relative;
     overflow-x: hidden;
 }
+
+.stage-wrapper{
+    position: relative;
+}
+.stage-chip{
+    position: absolute;
+    top: 0;
+    right: 0;
+    transform: translateY(-50%)
+}
+.stage-index{
+    position: absolute;
+    top: 0;
+    left: 0;
+    transform: translateY(-50%) translateX(-10%)
+}
