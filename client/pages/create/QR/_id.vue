@@ -52,6 +52,7 @@ import Header from '~/components/UI/Header'
 import { mapState } from 'vuex'
 import { validationMixin } from 'vuelidate'
 import { required, minLength} from 'vuelidate/lib/validators'
+import QrScanner from 'qr-scanner';
 export default {
     mixins: [validationMixin],
     validations: {
@@ -68,6 +69,13 @@ export default {
         this.stage = {...this.$store.getters['create/getCurrentStage']}
         if (this.stage.stageAction && this.stage.stageAction.to){
             this.stage.to = this.stage.stageAction.to
+            QrScanner.scanImage(this.stage.stageAction.to)
+                .then(result => {
+                   this.stage.to = result
+                })
+                .catch(error => {
+                    console.log(error)
+                });
             this.$axios.get(`/getQr?word=${this.stage.to}`).then(res=>{
                 this.qr = res.data.data
             })
