@@ -63,25 +63,28 @@ export default {
             reader.onload = function () {
                 this.background = reader.result
             }.bind(this);
-            QrScanner.scanImage(e)
-                .then(result => {
-                    this.$router.push(`?q=${result}`)
-                    this.loading = false
-                    this.error = false
-                    if(result==this.codeWord){
-                        ctx.$emit('stageComplete')
-                    }
-                    else {
-                        this.error=true
-                        this.errorText = 'Неверный код'
-                    }
-                })
-                .catch(error => {
-                    console.log(error)
-                    this.error=true
-                    this.errorText='QR-код не найден'
-                    this.loading = false
-                });
+            ctx.$emit('stageComplete')
+            // QrScanner.scanImage(e)
+            //     .then(result => {
+            //         this.$router.push(`?q=${result}`)
+            //         this.loading = false
+            //         this.error = false
+            //         console.log(error)
+
+            //         if(result.toLowerCase()==this.codeWord.toLowerCase()){
+            //             ctx.$emit('stageComplete')
+            //         }
+            //         else {
+            //             this.error=true
+            //             console.log()
+            //             this.errorText = 'Неверный код'
+            //         }
+            //     })
+            //     .catch(error => {
+            //         this.error=true
+            //         this.errorText='QR-код не найден'
+            //         this.loading = false
+            //     });
         },
     }
 }
