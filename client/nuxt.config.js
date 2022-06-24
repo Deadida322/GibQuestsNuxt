@@ -43,7 +43,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://31.172.67.113',
+    baseURL: 'https://webgib.ru',
   },
 
   vuetify: {
