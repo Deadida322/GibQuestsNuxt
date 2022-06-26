@@ -107,7 +107,7 @@ export default {
     watch:{
         yourLat(){
             console.log(Math.abs(this.yourLat - this.goalLat))
-            if(Math.abs(this.yourLat - this.goalLat)<0.0002000){
+            if(Math.abs(this.yourLat - this.goalLat)<0.0001500){
                 this.latSuccess = true
             }
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
@@ -116,7 +116,7 @@ export default {
         yourLong(){
             console.log(this.yourLong - this.goalLong)
 
-            if(Math.abs(this.yourLong - this.goalLong)<0.0003000) {
+            if(Math.abs(this.yourLong - this.goalLong)<0.0001500) {
                 this.longSuccess = true
             } 
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
