@@ -23,6 +23,7 @@
 
 <script>
 import Header from '~/components/UI/Header'
+import Stage from '~/components/Stage.vue'
 export default {
     data(){
         return{
@@ -37,7 +38,8 @@ export default {
         })
     },
     components:{
-        Header
+        Header,
+        Stage
     }
 }
 </script>

@@ -1,6 +1,5 @@
 <template>
   <v-app>
-    <Header title='Создать'/>
     <nuxt v-if="show"/>
   </v-app>
 </template>
