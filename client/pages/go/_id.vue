@@ -116,7 +116,7 @@ export default {
         
 
     },
-    layout: 'needToLog',
+    layout: 'creating',
     data(){
         return{
             quest: {},

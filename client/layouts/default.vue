@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <nuxt/>
+    <nuxt v-if="show"/>
   </v-app>
 </template>
 
@@ -12,12 +12,16 @@ export default {
     const user = getItem('user')
     console.log(user)
     if(user){
-      this.$store.dispatch('auth/logIn', user)
+      this.$store.dispatch('auth/logIn', user).then(()=>this.show=true).catch(()=>this.show=true)
+    }
+    else{
+      this.show=true
     }
   },
   
   data () {
     return {
+      show: false
     }
   },
 }
