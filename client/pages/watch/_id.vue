@@ -26,23 +26,26 @@
 import { mapGetters, mapState } from 'vuex'
 import Header from '~/components/UI/Header'
 import User from '~/components/watch/User.vue'
-import { setInterval } from 'timers';
+import { setInterval, setTimeout } from 'timers';
 export default {
     created(){
         this.id=this.$route.params.id
+        this.$axios.get(`/getCreatedQuest?id=${this.id}`).then(res=>{
+            this.users = res.data.data
+        })
         this.interval = setInterval(()=>{
             this.$axios.get(`/getCreatedQuest?id=${this.id}`).then(res=>{
                 this.users = res.data.data
             })
         }, 2000)
         
-        
         this.$axios.get(`/getQuest?id=${this.id}`).then(res=>{
             this.quest = res.data.data
         })
     },
-    destroyed() {
-        clearInterval(this.interval)
+    beforeDestroy() {
+        console.log(this.interval)
+        window.clearInterval(this.interval._id)
     },
     data(){
         return{

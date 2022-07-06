@@ -65,6 +65,7 @@ export default {
     watch:{
         stage:{
             handler: function(val){
+                console.log(val)
                 this.$emit('stageChange', val)
             },
             deep: true

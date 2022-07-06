@@ -88,11 +88,11 @@ export default {
     },
     props: {
         goalLat:{
-            type: String,
+            type: String || Number,
             required: true
         },
         goalLong:{
-            type: String,
+            type: String || Number,
             required: true
         }
     },

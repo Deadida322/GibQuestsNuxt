@@ -23,7 +23,6 @@
 
 <script>
 import Header from '~/components/UI/Header'
-import { mapGetters } from 'vuex'
 export default {
     data(){
         return{

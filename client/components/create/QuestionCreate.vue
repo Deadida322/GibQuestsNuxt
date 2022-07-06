@@ -1,7 +1,10 @@
 <template>
     <v-container class="pa-0" @click="handleTestChange">
         <v-card class="mt-3 mb-6" v-for="(item, index) in questions" :key="index" shaped >
-            <v-card-title>Вопрос {{index+1}}</v-card-title>
+            <v-card-title class="d-flex justify-space-between">
+                Вопрос {{index+1}} 
+                <v-icon @click="removeQuestion(index)" color="red">mdi-close</v-icon>
+            </v-card-title>
             <v-card-text>
                 <v-text-field
                     v-model="item.contain"
@@ -35,7 +38,6 @@
                             :hint="`Вариант ${j+1}`"
                             :label="`Вариант ${j+1}`"
                             v-model="item.answers[j]"
-                        
                         >
                         </v-text-field>
                         <v-btn
@@ -211,8 +213,9 @@ export default {
             console.log(this.questions[i])
         },
         setCurrentDrag(index){
+            console.log(index)
             this.currentDrag = index
-            this.questions[index].rightAnswer = this.questions[i].answers
+            this.questions[index].rightAnswer = this.questions[index].answers
         },
         addQuestion(type){
             this.questions.push({
@@ -226,11 +229,19 @@ export default {
                 type: type,
                 rightAnswer: ['Смешарики']
             })
+        },
+        removeQuestion(i){
+            this.questions.splice(i, 1)
         }
     },
     watch:{
         questions:{
             handler:function(){
+                for(let item of this.questions){
+                    if(item.type =='Расположить по порядку'){
+                        item.answers = item.rightAnswer
+                    }
+                }
                 this.$emit('testChange', this.questions)
             },
             deep: true

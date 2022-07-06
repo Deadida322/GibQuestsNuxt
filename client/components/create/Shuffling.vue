@@ -1,6 +1,8 @@
 <template>
-    <v-bottom-sheet
+    <v-dialog
       v-model="sheet"
+      scrollable
+      transition="dialog-bottom-transition"
       inset
     >
       <template v-slot:activator="{ on, attrs }">
@@ -10,9 +12,9 @@
             <v-icon>mdi-shuffle</v-icon>
         </v-btn>
       </template>
-      <v-sheet
+      <v-card
+        height="100%"
         class="text-center"
-        height="700px"
       >
         <v-btn
           class="mt-2"
@@ -34,8 +36,8 @@
                 <Stage class="mb-4" :idx="idx" :stage="item"/>
             </Draggable>
         </Container>
-      </v-sheet>
-    </v-bottom-sheet>
+      </v-card>
+    </v-dialog>
 </template>
 
 <script>

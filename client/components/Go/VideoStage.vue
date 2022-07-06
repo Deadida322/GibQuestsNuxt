@@ -30,7 +30,17 @@ export default {
     },
     computed:{
         computedSrc(){
-            const viewCode = this.url.split('=')[1]
+            let viewCode = ''
+            if(this.url.includes('youtube.com')){
+                viewCode = this.url.split('=')[1]
+            }
+            else{
+                let result = this.url.split('/')
+
+                viewCode = result[result.length-1]
+                console.log(viewCode)
+
+            }
             return `https://www.youtube.com/embed/${viewCode}`
         }
     }

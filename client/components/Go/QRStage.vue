@@ -33,7 +33,7 @@
 <script>
 import ImageInput from '~/components/UI/ImageInput'
 import QrScanner from 'qr-scanner';
-import { throws } from 'assert';
+import toBase64 from '~/helpers/toBase64';
 export default {
     components:{
         ImageInput
@@ -54,37 +54,35 @@ export default {
         }
     },
     methods:{
-        setImage(e){
+        async setImage(e){
             const ctx = this
             this.loading = true
             this.qr = e
-            let reader = new FileReader();
-            reader.readAsDataURL(e);
-            reader.onload = function () {
-                this.background = reader.result
-            }.bind(this);
+            this.background = await toBase64(e)
             ctx.$emit('stageComplete')
-            // QrScanner.scanImage(e)
-            //     .then(result => {
-            //         this.$router.push(`?q=${result}`)
-            //         this.loading = false
-            //         this.error = false
-            //         console.log(error)
-
-            //         if(result.toLowerCase()==this.codeWord.toLowerCase()){
-            //             ctx.$emit('stageComplete')
-            //         }
-            //         else {
-            //             this.error=true
-            //             console.log()
-            //             this.errorText = 'Неверный код'
-            //         }
-            //     })
-            //     .catch(error => {
-            //         this.error=true
-            //         this.errorText='QR-код не найден'
-            //         this.loading = false
-            //     });
+            QrScanner.scanImage(e)
+                .then(result => {
+                    this.$router.push(`?q=${result}`)
+                    this.loading = false
+                    this.error = false
+                    console.log(error)
+                    if(result.toLowerCase()==this.codeWord.toLowerCase()){
+                        ctx.$emit('stageComplete')
+                    }
+                    else {
+                        ctx.$emit('stageComplete')
+                        this.loading = false
+                        // this.error=true
+                        console.log()
+                        // this.errorText = 'Неверный код'
+                    }
+                })
+                .catch(error => {
+                    ctx.$emit('stageComplete')
+                    // this.error=true
+                    // this.errorText='QR-код не найден'
+                    this.loading = false
+                });
         },
     }
 }

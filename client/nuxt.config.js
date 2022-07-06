@@ -32,7 +32,7 @@ export default {
     { src: '~plugins/leaflet.js', ssr: false }
   ],
 
-  components: true,
+  components: false,
 
   buildModules: [
     '@nuxtjs/vuetify',
@@ -61,6 +61,5 @@ export default {
   build: {
     publicPath: '',
     basePath: './',
-    extend(config, ctx) {}
   },
 }

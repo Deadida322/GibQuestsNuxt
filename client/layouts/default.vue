@@ -15,7 +15,7 @@ export default {
       this.$store.dispatch('auth/logIn', user)
     }
   },
-  name: 'DefaultLayout',
+  
   data () {
     return {
     }
