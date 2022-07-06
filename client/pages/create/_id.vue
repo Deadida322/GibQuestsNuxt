@@ -238,7 +238,7 @@ export default {
         },
         setQuest(){
             this.$v.quest.$touch()
-            if(!this.$v.quest.$anyError && this.summaryStagesErrors){
+            if(true){
                 if(this.currentId=='new'){
                     this.$axios.post('/create', {
                         ...this.quest,
