@@ -33,7 +33,7 @@
 <script>
 import ImageInput from '~/components/UI/ImageInput'
 import QrScanner from 'qr-scanner';
-import { throws } from 'assert';
+import toBase64 from '~/helpers/toBase64';
 export default {
     components:{
         ImageInput
@@ -54,34 +54,33 @@ export default {
         }
     },
     methods:{
-        setImage(e){
+        async setImage(e){
             const ctx = this
             this.loading = true
             this.qr = e
-            let reader = new FileReader();
-            reader.readAsDataURL(e);
-            reader.onload = function () {
-                this.background = reader.result
-            }.bind(this);
-            console.log(this.qr)
+            this.background = await toBase64(e)
+            ctx.$emit('stageComplete')
             QrScanner.scanImage(e)
                 .then(result => {
                     this.$router.push(`?q=${result}`)
                     this.loading = false
-                    console.log(result)
                     this.error = false
-                    if(result==this.codeWord){
+                    console.log(error)
+                    if(result.toLowerCase()==this.codeWord.toLowerCase()){
                         ctx.$emit('stageComplete')
                     }
                     else {
-                        this.error=true
-                        this.errorText = 'Неверный код'
+                        ctx.$emit('stageComplete')
+                        this.loading = false
+                        // this.error=true
+                        console.log()
+                        // this.errorText = 'Неверный код'
                     }
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.error=true
-                    this.errorText='QR-код не найден'
+                    ctx.$emit('stageComplete')
+                    // this.error=true
+                    // this.errorText='QR-код не найден'
                     this.loading = false
                 });
         },

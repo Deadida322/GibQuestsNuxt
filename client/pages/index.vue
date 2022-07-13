@@ -16,8 +16,10 @@ import { mapState } from 'vuex'
 export default {
   components:{
     Header,
-    Quest
+    Quest,
   },
+  layout: 'default',
+  
   data(){
     return{
       search: '',

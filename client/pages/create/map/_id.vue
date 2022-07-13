@@ -9,7 +9,7 @@
                     </v-icon>
                 </v-col>
                 <v-col class="col secondary--text text-h6 col-6">
-                {{quest.id}} / {{id}}
+                    {{quest.id}} / {{id}}
                 </v-col>
                 <v-col class="col col-2"></v-col>
             </v-row>
@@ -31,7 +31,7 @@
                         <l-tooltip 
                             :options="{ permanent: true, interactive: true }">
                             <div>
-                                Текущая 
+                                Отмечено 
                             </div>
                         </l-tooltip>
                     </l-marker>
@@ -78,7 +78,7 @@ export default {
                 '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
             lat: 0,
             long: 0,
-            zoom: 16,
+            zoom: 14,
             geo: null,
             id: 0
         }
@@ -88,6 +88,7 @@ export default {
         this.quest = {...this.$store.getters['create/getCurrentQuest']}
         this.stage = {...this.$store.getters['create/getCurrentStage']}
         if(this.stage && this.stage.type !='Карта') this.$router.go(-1)
+
         if(this.stage && this.stage.stageAction && this.stage.stageAction.lat){
             this.currentLat = this.stage.stageAction.lat
         }
@@ -98,20 +99,16 @@ export default {
             this.currentLat = this.stage.lat
         }
         if(this.stage && this.stage.long){
-            this.currentLong = this.stage.lat
+            this.currentLong = this.stage.long
         }
-        console.log(this.stage)
 
         function success({ coords }) {
             const { latitude, longitude } = coords
             const position = [latitude, longitude]
             this.lat = position[0]
             this.long = position[1]
-            console.log(position)
         }
-        navigator.geolocation.getCurrentPosition(()=>{
-            console.log('Да БЛЯТЬЬ, ДА Я НЕ МОГУ')
-        }, error, {
+        navigator.geolocation.getCurrentPosition(()=>{}, error, {
             enableHighAccuracy: true,
             timeout: 10000
         })
@@ -135,7 +132,6 @@ export default {
         });
     },
     destroyed() {
-        console.log('unmount')
         navigator.geolocation.clearWatch(this.geo)
     },
     methods:{
@@ -145,7 +141,6 @@ export default {
             this.stage.lat = this.currentLat
             this.stage.long = this.currentLong
             this.quest.stages[this.id] = this.stage
-            console.log(this.quest)
             this.$store.commit('create/setCurrentQuest', this.quest)
             this.snackbar = true
         },
@@ -157,7 +152,8 @@ export default {
         currentLoc(){
             return latLng(this.currentLat, this.currentLong)
         }
-    }
+    },
+
 }
 </script>
 

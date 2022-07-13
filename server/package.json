@@ -34,8 +34,10 @@
       "typeorm": "^0.3.6"
    },
    "scripts": {
+      "build": "tsc",
       "start": "ts-node src/index.ts",
       "dev": "tsc && nodemon dist/app.js",
+      "start:prod": "node dist/server.js",
       "typeorm": "typeorm-ts-node-commonjs"
    }
 }

@@ -33,7 +33,6 @@ export default {
           this.$router.push('/')
         })
         .catch(err=>this.error=err)
-      console.log(user)
     }
   },
   computed:{

@@ -8,7 +8,7 @@
         </v-img>
         <v-card-title class="d-flex align-center justify-space-between text--secondary pb-0">
             {{item.title}} 
-           <QuestMenu v-if="edit" :id="item.id"/>
+           <QuestMenu @remove="$emit('remove')" v-if="edit" :id="item.id"/>
         </v-card-title>
         <div v-if="item.users && item.users.length">
             <v-card-subtitle class="py-0 pb-2 text--secondary">Сейчас проходят</v-card-subtitle>

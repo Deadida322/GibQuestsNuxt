@@ -3,7 +3,7 @@
         <Header title='Ваши квесты'/>
         <v-main class="pa-2 mt-4">
             <Search :placeholder="'Найти среди своих'" @search="search"/>
-            <Quest class="mb-2" edit v-for="(item, key) in quests" :key="key" :item="item"/>
+            <Quest @remove="remove(item)" class="mb-2" edit v-for="(item, key) in quests" :key="key" :item="item"/>
             <Add @click="createNew" class="mt-5"><v-list>
                 <v-list-item-group>
                         <v-list-item @click="createNew" color="primary">
@@ -28,6 +28,7 @@ export default {
         Quest,
         Add
     },
+    layout: 'needToLog',
     data(){
         return{
             quests: {}
@@ -37,17 +38,20 @@ export default {
         if(!this.isLoggedIn) this.$router.push('/login')
         this.$axios.get(`getCreatedQuests?id=${this.user.id}`).then((res)=>{
             this.quests = res.data.data
-            console.log(this.quests)
         })
-
     },
     methods: {
         search(e){
-            console.log(e)
         },
         createNew(){
             this.$store.commit('create/removeCurrentQuest')
             this.$router.push(`/create/new`)
+        },
+        remove(e){
+            this.$axios.delete(`/deleteQuest?id=${e.id}`).then(res=>{
+                console.log(res)
+                if (res.data.status=='ok') this.quests = this.quests.filter(item=>item.id!=e.id)
+            })
         }
     },
     computed: {

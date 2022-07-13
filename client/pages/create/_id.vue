@@ -1,110 +1,114 @@
 <template>
     <div>
-        <Header title='Создать'/>
-        <v-main class="pa-2 mt-4">
+        <v-main>
             <v-row class="my-3 d-flex justify-space-between text-center align-center">
-                <v-col no-gutters class="col col-2">
-                    <v-icon @click="$router.push('/yours')" large>
-                        mdi-arrow-left
-                    </v-icon>
+                <v-col no-gutters class="col col-2"/>
+                <v-col class="col secondary--text col-12 col-md-8 сol-lg-6">
+                    <v-row class="ma-0 pa-0">
+                        <v-col class="col-1 col">
+                            <v-icon class="text-left justify-start flex-grow-1" @click="$router.push('/yours')" large>
+                                mdi-arrow-left
+                            </v-icon>
+                        </v-col>
+                        <v-col class="col-10 col text-h6">{{quest.title}} </v-col>
+                        <v-col class="col-1 col"></v-col>
+                    </v-row>
+                    <v-text-field 
+                        @input="$v.quest.title.$touch()"
+                        @blur="$v.quest.title.$touch()"
+                        v-model="quest.title"
+                        :error-messages="titleErrors"
+                        :counter="20" solo label="Название"
+                    />
+                    <div class="text-h5">Описание</div>
+                    <v-card v-ripple="false" @click="$v.quest.description.$touch()"
+                        @blur="$v.quest.description.$touch()" class="mt-2 mb-2">
+                        <wysiwyg v-model="quest.description"/>
+                    </v-card>
+                    <v-alert
+                        border="top"
+                        color="red lighten-2"
+                        v-if="descriptionErrors.length"
+                        dark>
+                        {{descriptionErrors[0]}}
+                    </v-alert>
+                    <ImageInput 
+                        @click="$v.quest.image.$touch()" 
+                        :class="{'redBorder': imageErrors.length}" 
+                        @change="setImage" 
+                        :background="background"/>
+                    <v-alert
+                        class="mt-2"
+                        border="top"
+                        color="red lighten-2"
+                        v-if="imageErrors.length"
+                        dark>
+                        {{imageErrors[0]}}
+                    </v-alert>
+                    <div class="mt-4 mb-8 d-flex align-center justify-space-between">
+                        <div class="text-h5">Этапы</div>
+                        <Shuffling 
+                            v-if="quest.stages && quest.stages.length" 
+                            @shuffleComplete="shuffleComplete" 
+                            :items="quest.stages"/>
+                    </div>
+                    <wrapper :key="key">
+                        <Stage 
+                            v-for="(item, idx) in quest.stages" :key="idx" 
+                            class="mb-7"
+                            :class="{'redBorder': myStagesErrors[idx]}" 
+                            :item="item" 
+                            :idx="idx" 
+                            @remove="removeStage(idx)"
+                            @createQR="createQR(idx)"
+                            @createText="createText(idx)"
+                            @createTest="createTest(idx)"
+                            @createMap="createMap(idx)"
+                            @stageChange="stageChange($event, idx)"
+                        />
+                    </wrapper>
+                    <v-alert
+                        class="mt-2"
+                        border="top"
+                        color="red lighten-2"
+                        v-if="stagesErrors.length"
+                        dark
+                    >
+                        {{stagesErrors[0]}}
+                    </v-alert>
+                    <v-alert
+                        class="mt-2"
+                        border="top"
+                        color="red lighten-2"
+                        v-if="myStagesErrors.length"
+                        dark
+                    >
+                        Поля в этапах не могут быть пустыми
+                    </v-alert>
+                    <Add class="mt-4">
+                        <v-list>
+                            <v-list-item-group>
+                                <v-list-item @click="addStage(item)" v-for="item in types" :key="item" color="primary">
+                                    <v-list-item-title>{{item}}</v-list-item-title>
+                                </v-list-item>
+                            </v-list-item-group>
+                        </v-list>
+                    </Add>
+                    <v-card-actions class="pa-0 pt-2">
+                        <v-spacer/>
+                        <v-btn @click="$router.push('/yours')">Отмена</v-btn>
+                        <v-btn @click="setQuest()" color="primary">Сохранить</v-btn>
+                    </v-card-actions>
                 </v-col>
-                <v-col class="col secondary--text text-h6 col-6">
-                {{quest.title}}
-                </v-col>
-                <v-col class="col col-2"></v-col>
+                <v-col class="col col-2"/>
             </v-row>
-            <v-text-field 
-                @input="$v.quest.title.$touch()"
-                @blur="$v.quest.title.$touch()"
-                v-model="quest.title"
-                :error-messages="titleErrors"
-                :counter="20" solo label="Название"
-            />
-            <div class="text-h5">Описание</div>
-            <v-card v-ripple="false" @click="$v.quest.description.$touch()"
-                @blur="$v.quest.description.$touch()" class="mt-2 mb-2">
-                <wysiwyg v-model="quest.description"/>
-            </v-card>
-            <v-alert
-                border="top"
-                color="red lighten-2"
-                v-if="descriptionErrors.length"
-                dark
-            >
-                    {{descriptionErrors[0]}}
-            </v-alert>
-            <ImageInput 
-                @click="$v.quest.image.$touch()" 
-                :class="{'redBorder': imageErrors.length}" 
-                @change="setImage" 
-                :background="background"/>
-            <v-alert
-                class="mt-2"
-                border="top"
-                color="red lighten-2"
-                v-if="imageErrors.length"
-                dark
-            >
-                {{imageErrors[0]}}
-            </v-alert>
-            <div class="mt-4 mb-8 d-flex align-center justify-space-between">
-                <div class="text-h5">Этапы</div>
-                <Shuffling v-if="quest.stages && quest.stages.length" @shuffleComplete="shuffleComplete" :items="quest.stages"/>
-            </div>
-            <wrapper :key="key">
-                <Stage 
-                    v-for="(item, idx) in quest.stages" :key="idx" 
-                    class="mb-7"
-                    :class="{'redBorder': myStagesErrors[idx]}" 
-                    :item="item" 
-                    :idx="idx" 
-                    @remove="removeStage(idx)"
-                    @createQR="createQR(idx)"
-                    @createText="createText(idx)"
-                    @createTest="createTest(idx)"
-                    @createMap="createMap(idx)"
-                    @stageChange="stageChange($event, idx)"
-                />
-            </wrapper>
-            
-            <v-alert
-                class="mt-2"
-                border="top"
-                color="red lighten-2"
-                v-if="stagesErrors.length"
-                dark
-            >
-                {{stagesErrors[0]}}
-            </v-alert>
-            <v-alert
-                class="mt-2"
-                border="top"
-                color="red lighten-2"
-                v-if="myStagesErrors.length"
-                dark
-            >
-                Поля в этапах не могут быть пустыми
-            </v-alert>
-            <Add class="mt-4">
-                <v-list>
-                    <v-list-item-group>
-                        <v-list-item @click="addStage(item)" v-for="item in types" :key="item" color="primary">
-                            <v-list-item-title>{{item}}</v-list-item-title>
-                        </v-list-item>
-                    </v-list-item-group>
-                </v-list>
-            </Add>
-            <v-card-actions class="pa-0 pt-2">
-                <v-spacer/>
-                <v-btn>Отмена</v-btn>
-                <v-btn @click="setQuest()" color="primary">Сохранить</v-btn>
-            </v-card-actions>
         </v-main>
     </div>
 </template>
 
 <script>
 import Header from '~/components/UI/Header.vue'
+import toBase64 from '~/helpers/toBase64'
 import Search from '~/components/UI/Search.vue'
 import Quest from '~/components/Quest.vue'
 import Add from '~/components/UI/Add'
@@ -112,10 +116,10 @@ import Stage from '~/components/create/Stage'
 import ImageInput from '~/components/UI/ImageInput'
 import { mapState } from 'vuex'
 import { validationMixin } from 'vuelidate'
-import { required, maxLength, minLength, email } from 'vuelidate/lib/validators'
+import { required, maxLength, minLength } from 'vuelidate/lib/validators'
 import Shuffling from '~/components/create/Shuffling.vue'
 import wrapper from '~/components/UI/wrapper'
-
+import imageCompression from 'browser-image-compression';
 export default {
     mixins: [validationMixin],
     validations: {
@@ -126,18 +130,17 @@ export default {
             stages: { required }
         }
     },
-    created(){
+    async created(){
         if(!this.isLoggedIn) this.$router.push('/login')
         this.currentId = this.$route.params.id
         this.quest = this.$store.getters['create/getCurrentQuest']
         if(this.currentId != 'new'){
-            console.log(this.quest)
             if(this.quest.id && this.quest.id!='new') return
             this.$axios.get(`/getQuest?id=${this.currentId}`).then(res=>{
                 this.quest = res.data.data
+                this.quest.stages=this.quest.stages.sort((a,b)=>a.number-b.number)
                 this.$store.commit('create/setCurrentQuest', this.quest)
                 this.background = this.quest.image
-                console.log(this.background)
             })
         }
         if(this.currentId!=this.quest.id){
@@ -156,11 +159,10 @@ export default {
                 'Карта',
                 'Тест'
             ],
-            quest:{
-                title: 'Новый'
-            },
+            quest:{},
         }
     },
+    layout: 'creating',
     components: {
         Header,
         Search,
@@ -172,26 +174,29 @@ export default {
         wrapper
     },
     methods: {
-        search(e){
-            console.log(e)
-        },
         stageChange(e, idx){
             this.myStagesErrors
             this.quest.stages[idx] = e
+            this.$store.commit('create/setCurrentQuest', this.quest)
         },
-        setImage(e){
-            this.quest.image = e
-            let reader = new FileReader();
-            reader.readAsDataURL(e);
-            reader.onload = function () {
-                this.background = reader.result
-            }.bind(this);
-            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
+        async setImage(e){
+            let controller = new AbortController();
+            let options = {
+                signal: controller.signal,
+                maxSizeMB: 0.5, 
+                initialQuality: .4  
+            }
+            let image = await imageCompression(e, options)
+            this.quest={
+                ...this.quest,
+                image: image || e
+            }
+              
+            this.$store.commit('create/setCurrentQuest', this.quest)
             if(this.currentId!='new'){
                 let data = new FormData()
                 data.append('image', e, e.name)
                 this.$axios.post(`/updateImage?id=${this.currentId}`, data).then((res)=>{
-                    console.log(res)
                 })
             }
         },
@@ -212,7 +217,6 @@ export default {
             this.$router.push(`/create/QR/${id}`)
         },
         addStage(type){
-            console.log(this.quest.stages)
             this.$v.quest.stages.$touch()
             let toPush =  {
                 number: this.quest.stages.length+1,
@@ -221,12 +225,12 @@ export default {
             }
             if(type=='Видео') toPush.url = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' 
             this.quest.stages.push(toPush)
-            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
+            this.$store.commit('create/setCurrentQuest', this.quest)
             this.$store.commit('create/setCurrentStage', toPush)
         },
         removeStage(idx){
             this.quest.stages.splice(idx, 1)
-            this.$store.commit('create/setCurrentQuest', JSON.parse(JSON.stringify(this.quest)))
+            this.$store.commit('create/setCurrentQuest', this.quest)
         },
         shuffleComplete(stages){
             this.key++
@@ -234,8 +238,7 @@ export default {
         },
         setQuest(){
             this.$v.quest.$touch()
-            console.log(this.$v.quest.image)
-            if(!this.$v.quest.$anyError && this.summaryStagesErrors){
+            if(true){
                 if(this.currentId=='new'){
                     this.$axios.post('/create', {
                         ...this.quest,
@@ -247,10 +250,9 @@ export default {
                         const e = this.quest.image
                         let data = new FormData()
                         data.append('image', e, e.name)
-                        this.$axios.post('/updateImage', data).then((res)=>{
+                        this.$axios.post(`/updateImage?id=${this.currentId}`, data).then((res)=>{
                             this.$router.push(`/create/${this.currentId}`)
                             this.$store.commit('create/setCurrentQuest', this.quest)
-
                         })
                     })
                 } else {
@@ -261,8 +263,6 @@ export default {
                         }
                     }).then(res=>{
                         this.currentId = res.data.data.id
-                        console.log(this.currentId)
-                        console.log(res)
                         this.$router.push(`/create/${this.currentId}`)
                     })
                 }
@@ -314,7 +314,9 @@ export default {
                 }
                 if(this.quest.stages[i].type=='Видео'){
                     const reg = new RegExp(/https:\/\/(www.|.{0,})youtube\.com\/watch\?v=.{3,}/)
-                    if(!(this.quest.stages[i].url && reg.test(this.quest.stages[i].url.toLowerCase()))) errors[i]=true
+                    if(!(this.quest.stages[i].url 
+                        && reg.test(this.quest.stages[i].url.toLowerCase()) 
+                        || this.quest.stages[i].url.includes('https://youtu.be/'))) errors[i]=true
                 }
                 if(this.quest.stages[i].type=='QR'){
                     if(!this.quest.stages[i].to) errors[i]=true
@@ -325,7 +327,17 @@ export default {
             }
             return errors
         },
-    }
+    },
+    watch:{
+        'quest.image':{
+            handler: async function(val){
+                if(val && val.type && val.type.includes('image')){
+                    this.background = await toBase64(val)
+                }
+            },
+            deep: true
+        }
+    },
 }
 </script>
 

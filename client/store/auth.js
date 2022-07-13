@@ -12,7 +12,6 @@ export const actions = {
         return new Promise((resolve, reject)=>{
             this.$axios.post('/auth', user).then((res)=>{
                 let data = res.data
-                console.log(data)
                 if(data.status ==='error'){
                     commit('logout')
                     return reject(data.info)
@@ -29,7 +28,6 @@ export const actions = {
         return new Promise((resolve, reject)=>{
             this.$axios.post('/register', user).then((res)=>{
                 let data = res.data
-                console.log(data)
                 if(data.status ==='error') return reject(data.info)
                 if(data.status ==='ok') {
                     return resolve(data)

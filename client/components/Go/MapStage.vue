@@ -56,8 +56,6 @@ export default {
         }
     },
     mounted(){
-        console.log(this.goalLat, this.goalLong)
-        console.log('mounted')
         function success(e) {
             const { latitude, longitude } = e.coords
             const position = [latitude, longitude]
@@ -69,7 +67,6 @@ export default {
             console.log(message) 
         }
         navigator.geolocation.getCurrentPosition(()=>{
-            console.log('Да БЛЯТЬЬ, ДА Я НЕ МОГУ')
         }, error, {
             enableHighAccuracy: true,
             timeout: 10000
@@ -77,20 +74,25 @@ export default {
         this.geo = navigator.geolocation.watchPosition(success, error, {
             enableHighAccuracy: true
         })
+        delete Icon.Default.prototype._getIconUrl;
+        Icon.Default.mergeOptions({
+            iconRetinaUrl: require('leaflet/dist/images/marker-icon-2x.png'),
+            iconUrl: require('leaflet/dist/images/marker-icon.png'),
+            shadowUrl: require('leaflet/dist/images/marker-shadow.png'),
+        });
       
         
     },
     destroyed() {
-        console.log('unmount')
         navigator.geolocation.clearWatch(this.geo)
     },
     props: {
         goalLat:{
-            type: String,
+            type: String || Number,
             required: true
         },
         goalLong:{
-            type: String,
+            type: String || Number,
             required: true
         }
     },
@@ -104,17 +106,18 @@ export default {
     },
     watch:{
         yourLat(){
-            if(Math.abs(this.yourLat - this.goalLat)<1200){
+            console.log(Math.abs(this.yourLat - this.goalLat))
+            if(Math.abs(this.yourLat - this.goalLat)<0.0001500){
                 this.latSuccess = true
-                console.log('asdasd');
             }
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
 
         },
         yourLong(){
-            if(Math.abs(this.yourLong - this.goalLong)<2000) {
+            console.log(this.yourLong - this.goalLong)
+
+            if(Math.abs(this.yourLong - this.goalLong)<0.0001500) {
                 this.longSuccess = true
-                console.log('asdasd');
             } 
             if(this.latSuccess && this.longSuccess) this.$emit('stageComplete')
             console.log(this.latSuccess, this.longSuccess );

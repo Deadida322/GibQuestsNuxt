@@ -8,22 +8,25 @@
           <v-list-item-title>Главная</v-list-item-title>
       </v-list-item>
       <v-list-group prepend-icon="mdi-pencil">
-        <template v-slot:activator>
+        <template  v-slot:activator>
           <v-list-item-title>Создать квест</v-list-item-title>
         </template>
-        <v-list-item active-class="activeLink" to="/create/new" class="ml-6">
-          <v-list-item-icon>
-            <v-icon small>mdi-loupe</v-icon>
-          </v-list-item-icon>
-          <v-list-item-title>Создать новый</v-list-item-title>
-        </v-list-item>
         <v-list-item active-class="activeLink" to="/yours" class="ml-6">
           <v-list-item-icon>
             <v-icon small>mdi-format-list-bulleted-square</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Ваши квесты</v-list-item-title>
         </v-list-item>
-        
+        <v-list-item 
+          @click="$store.commit('create/removeCurrentQuest')" 
+          active-class="activeLink" 
+          to="/create/new" 
+          class="ml-6">
+          <v-list-item-icon>
+            <v-icon small>mdi-loupe</v-icon>
+          </v-list-item-icon>
+          <v-list-item-title>Создать новый</v-list-item-title>
+        </v-list-item>
       </v-list-group>
       <v-list-group
         prepend-icon="mdi-play"

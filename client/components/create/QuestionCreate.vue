@@ -1,7 +1,10 @@
 <template>
     <v-container class="pa-0" @click="handleTestChange">
         <v-card class="mt-3 mb-6" v-for="(item, index) in questions" :key="index" shaped >
-            <v-card-title>Вопрос {{index+1}}</v-card-title>
+            <v-card-title class="d-flex justify-space-between">
+                Вопрос {{index+1}} 
+                <v-icon @click="removeQuestion(index)" color="red">mdi-close</v-icon>
+            </v-card-title>
             <v-card-text>
                 <v-text-field
                     v-model="item.contain"
@@ -35,7 +38,6 @@
                             :hint="`Вариант ${j+1}`"
                             :label="`Вариант ${j+1}`"
                             v-model="item.answers[j]"
-                        
                         >
                         </v-text-field>
                         <v-btn
@@ -94,9 +96,9 @@
                         v-model="item.rightAnswer[0]"
                     ></v-text-field>
                 </div>
-                <div @mousedown="setCurrentDrag(index)" v-if="item.type=='Расположить по порядку'" class="selections">
+                <div @click="setCurrentDrag(index)" v-if="item.type=='Расположить по порядку'" class="selections">
                     <Container
-                        @drop="onDrop"
+                        @drop="onDrop({index, ...$event})"
                         orientation='vertical'
                     >
                         <Draggable 
@@ -187,7 +189,8 @@ export default {
             ],
             typeRules: [val => (val || '').length > 0 || 'This field is required'],
             questions: [],
-            currentDrag: 0
+            currentDrag: 0,
+            tt: 0
         }
     },
     beforeMount() {
@@ -204,13 +207,15 @@ export default {
             this.questions[i].answers.splice(j,1)
         },
         onDrop(dropResult) {
-            console.log(this.currentDrag)
-            let i = this.currentDrag
+            let i = dropResult.index
             this.questions[i].answers = applyDrag(this.questions[i].answers, dropResult);
-            console.log("drop result ", this.questions[i].answers);
+            this.questions[i].rightAnswer = this.questions[i].answers 
+            console.log(this.questions[i])
         },
         setCurrentDrag(index){
+            console.log(index)
             this.currentDrag = index
+            this.questions[index].rightAnswer = this.questions[index].answers
         },
         addQuestion(type){
             this.questions.push({
@@ -224,11 +229,19 @@ export default {
                 type: type,
                 rightAnswer: ['Смешарики']
             })
+        },
+        removeQuestion(i){
+            this.questions.splice(i, 1)
         }
     },
     watch:{
         questions:{
             handler:function(){
+                for(let item of this.questions){
+                    if(item.type =='Расположить по порядку'){
+                        item.answers = item.rightAnswer
+                    }
+                }
                 this.$emit('testChange', this.questions)
             },
             deep: true

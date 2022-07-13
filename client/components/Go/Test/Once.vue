@@ -29,7 +29,7 @@ export default {
     watch:{
         answer(val){
             console.log(this.question.rightAnswer[0])
-            if(this.question.rightAnswer[0].toLowerCase().trim()==val.toLowerCase()) {
+            if(this.question.rightAnswer[0].toLowerCase().trim()==val.toLowerCase().trim()) {
                 this.$emit('questionAnswer')
                 this.flag=true
             }

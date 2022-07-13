@@ -13,7 +13,8 @@ export default {
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { hid: 'description', name: 'description', content: '' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      { "http-equiv": 'Content-Security-Policy', content: "upgrade-insecure-requests"}
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -31,7 +32,7 @@ export default {
     { src: '~plugins/leaflet.js', ssr: false }
   ],
 
-  components: true,
+  components: false,
 
   buildModules: [
     '@nuxtjs/vuetify',
@@ -42,7 +43,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://localhost:8000',
+    baseURL: 'https://webgib.ru',
   },
 
   vuetify: {
@@ -60,6 +61,5 @@ export default {
   build: {
     publicPath: '',
     basePath: './',
-    extend(config, ctx) {}
   },
 }

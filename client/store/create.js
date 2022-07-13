@@ -50,7 +50,6 @@ export const state = ()=>{
 export const mutations = {
     setCurrentStage(state, stage){
         state.currentStage = JSON.parse(JSON.stringify(stage))
-        console.log('поставили текущий', state, stage)
     },
     removeCurrentQuest(state){
         state.currentQuest = {
@@ -60,12 +59,19 @@ export const mutations = {
         }
     },
     setCurrentQuest(state, quest){
-        state.currentQuest = JSON.parse(JSON.stringify(quest))
-        console.log('поставили текущий', state, quest)
+        state.currentQuest = {
+            ...JSON.parse(JSON.stringify(quest)),
+            image: quest.image
+        }
     }
 }
 
 export const getters = {
     getCurrentStage: s => JSON.parse(JSON.stringify(s.currentStage)),
-    getCurrentQuest: s => JSON.parse(JSON.stringify(s.currentQuest))
+    getCurrentQuest: s =>{ 
+        return {
+            ...JSON.parse(JSON.stringify(s.currentQuest)), 
+            image: s.currentQuest.image
+        }
+    }
 }

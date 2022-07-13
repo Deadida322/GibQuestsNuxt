@@ -76,7 +76,6 @@ export default {
                 }
                 this.fileName = file.name
                 this.error = ''
-                console.log(file)
                 this.$emit('change', file)
             }
             catch{
