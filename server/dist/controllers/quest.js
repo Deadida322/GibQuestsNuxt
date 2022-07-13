@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getQR = exports.getImage = exports.updateImage = exports.trackQuest = exports.getProcessQuest = exports.processQuest = exports.deleteQuest = exports.create = exports.getCreatedQuest = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
+exports.getQR = exports.getImage = exports.updateImage = exports.trackQuest = exports.getProcessQuest = exports.processQuest = exports.deleteQuest = exports.editQuest = exports.create = exports.getCreatedQuest = exports.getCreatedQuests = exports.getQuests = exports.getQuest = void 0;
 var class_transformer_1 = require("class-transformer");
 var class_validator_1 = require("class-validator");
 var error_1 = require("../error");
@@ -45,7 +45,6 @@ var dto_1 = require("./dto");
 var quest_1 = require("../service/quest");
 var fs = require("fs");
 var path = require("path");
-var get_base_url_1 = require("get-base-url");
 var crypto = require("crypto");
 var config = require("config");
 function getQuest(request, response) {
@@ -146,9 +145,32 @@ function create(request, response) {
     });
 }
 exports.create = create;
+function editQuest(request, response) {
+    return __awaiter(this, void 0, void 0, function () {
+        var quest, errors, res;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    quest = (0, class_transformer_1.plainToClass)(dto_1.QuestDto, request.body);
+                    return [4 /*yield*/, (0, class_validator_1.validate)(quest, { skipMissingProperties: true })];
+                case 1:
+                    errors = _a.sent();
+                    if (errors.length) {
+                        throw new error_1.ArgumentError();
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.edit(quest.id, quest.title, quest.description, quest.stages, quest.author.username)];
+                case 2:
+                    res = _a.sent();
+                    response.json((0, utils_1.ok)(res));
+                    return [2 /*return*/];
+            }
+        });
+    });
+}
+exports.editQuest = editQuest;
 function deleteQuest(request, response) {
     return __awaiter(this, void 0, void 0, function () {
-        var res, e_1;
+        var oldQuest, parsePath, oldPath, res, e_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -157,17 +179,27 @@ function deleteQuest(request, response) {
                     }
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
-                    return [4 /*yield*/, quest_1.QuestService.deleteQuest(+request.query.id)];
+                    _a.trys.push([1, 4, , 5]);
+                    return [4 /*yield*/, quest_1.QuestService.getQuest(+request.query.id)];
                 case 2:
+                    oldQuest = _a.sent();
+                    if (oldQuest.image) {
+                        parsePath = oldQuest.image.split('/');
+                        oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1]);
+                        if (fs.existsSync(oldPath)) {
+                            fs.unlinkSync(oldPath);
+                        }
+                    }
+                    return [4 /*yield*/, quest_1.QuestService.deleteQuest(+request.query.id)];
+                case 3:
                     res = _a.sent();
                     response.json((0, utils_1.ok)(res));
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 5];
+                case 4:
                     e_1 = _a.sent();
                     response.json((0, utils_1.error)(e_1.message));
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 5];
+                case 5: return [2 /*return*/];
             }
         });
     });
@@ -294,7 +326,7 @@ function updateImage(request, response) {
                             fs.unlinkSync(oldPath);
                         }
                     }
-                    pathToClient = "".concat(config.get('protocol'), "://").concat((0, get_base_url_1.getBaseUrl)(), ":").concat(config.get('port'), "/img/").concat(hash, ".png");
+                    pathToClient = "".concat(config.get('protocol'), "://").concat(config.get('url'), "/img/").concat(hash, ".png");
                     return [4 /*yield*/, quest_1.QuestService.updateImagePath(+request.query.id, pathToClient)];
                 case 5:
                     res = _a.sent();

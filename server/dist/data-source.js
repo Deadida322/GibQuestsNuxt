@@ -19,9 +19,9 @@ exports.AppDataSource = new typeorm_1.DataSource({
     password: "postgres",
     database: "quests",
     synchronize: true,
+    migrations: ["migration/*.js"],
     logging: false,
     entities: exports.Entities,
-    migrations: [],
     subscribers: [],
 });
 //# sourceMappingURL=data-source.js.map

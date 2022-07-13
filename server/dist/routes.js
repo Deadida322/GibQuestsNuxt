@@ -26,6 +26,11 @@ var AppRoutes = [
         action: controllers_1.quest.create
     },
     {
+        path: "/edit",
+        method: "post",
+        action: controllers_1.quest.editQuest
+    },
+    {
         path: "/register",
         method: "post",
         action: controllers_1.user.register

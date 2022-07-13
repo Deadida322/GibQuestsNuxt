@@ -116,7 +116,7 @@ var QuestService = /** @class */ (function () {
                                     resQuestSave = _a.sent();
                                     return [4 /*yield*/, stages.forEach(function (s) {
                                             return __awaiter(this, void 0, void 0, function () {
-                                                var stage, stageTest_1, stageAction_1, word;
+                                                var stage, stageTest_1, stageAction;
                                                 return __generator(this, function (_a) {
                                                     switch (_a.label) {
                                                         case 0:
@@ -138,48 +138,136 @@ var QuestService = /** @class */ (function () {
                                                             return [4 /*yield*/, s.test.questions.forEach(function (q) { return saveQuestion(q, stageTest_1); })];
                                                         case 3:
                                                             _a.sent();
-                                                            return [3 /*break*/, 10];
+                                                            return [3 /*break*/, 9];
                                                         case 4:
-                                                            stageAction_1 = new Stage_Action_1.Stage_Action();
-                                                            if (!(stage.type === "QR")) return [3 /*break*/, 7];
-                                                            word = s.to;
-                                                            return [4 /*yield*/, QRCode.toDataURL(word, function (err, src) {
-                                                                    if (err) {
-                                                                        console.log(err);
-                                                                        throw new error_1.UnexpectedDBError();
-                                                                    }
-                                                                    stageAction_1.to = src;
-                                                                })];
+                                                            stageAction = new Stage_Action_1.Stage_Action();
+                                                            if (!(stage.type === "QR")) return [3 /*break*/, 6];
+                                                            stageAction.to = s.to;
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction)];
                                                         case 5:
                                                             _a.sent();
-                                                            return [4 /*yield*/, stageActionRep.save(stageAction_1)];
+                                                            return [3 /*break*/, 7];
                                                         case 6:
-                                                            _a.sent();
-                                                            return [3 /*break*/, 8];
-                                                        case 7:
                                                             if (stage.type === "Видео") {
-                                                                stageAction_1.url = s.url;
+                                                                stageAction.url = s.url;
                                                             }
                                                             else if (stage.type === "Карта") {
-                                                                stageAction_1.lat = s.lat;
-                                                                stageAction_1.long = s.long;
+                                                                stageAction.lat = s.lat;
+                                                                stageAction.long = s.long;
                                                             }
                                                             else {
-                                                                stageAction_1.text = s.text;
+                                                                stageAction.text = s.text;
                                                             }
-                                                            _a.label = 8;
+                                                            _a.label = 7;
+                                                        case 7:
+                                                            stageAction.stage = stage;
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction)];
                                                         case 8:
-                                                            stageAction_1.stage = stage;
-                                                            return [4 /*yield*/, stageActionRep.save(stageAction_1)];
-                                                        case 9:
                                                             _a.sent();
-                                                            _a.label = 10;
-                                                        case 10: return [2 /*return*/];
+                                                            _a.label = 9;
+                                                        case 9: return [2 /*return*/];
                                                     }
                                                 });
                                             });
                                         })];
                                 case 3:
+                                    _a.sent();
+                                    return [2 /*return*/, resQuestSave];
+                            }
+                        });
+                    }); })];
+            });
+        });
+    };
+    QuestService.edit = function (id, title, description, stages, username) {
+        return __awaiter(this, void 0, void 0, function () {
+            var questRep, stageRep, userRep, stageTestRep, stageActionRep;
+            var _this = this;
+            return __generator(this, function (_a) {
+                questRep = data_source_1.AppDataSource.getRepository(Quest_1.Quest);
+                stageRep = data_source_1.AppDataSource.getRepository(Stage_1.Stage);
+                userRep = data_source_1.AppDataSource.getRepository(User_1.User);
+                stageTestRep = data_source_1.AppDataSource.getRepository(Stage_Test_1.Stage_Test);
+                stageActionRep = data_source_1.AppDataSource.getRepository(Stage_Action_1.Stage_Action);
+                // const questionRep = AppDataSource.getRepository(Question);
+                // const answerRep = AppDataSource.getRepository(Answer);
+                // const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
+                return [2 /*return*/, (0, utils_1.catchOrmErrors)(function () { return __awaiter(_this, void 0, void 0, function () {
+                        var quest, author, resQuestSave, deleteQuests;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0: return [4 /*yield*/, questRep.findOneBy({ id: id })];
+                                case 1:
+                                    quest = _a.sent();
+                                    quest.title = title;
+                                    quest.description = description;
+                                    return [4 /*yield*/, userRep.findOneBy({ username: username })];
+                                case 2:
+                                    author = _a.sent();
+                                    quest.author = author;
+                                    return [4 /*yield*/, questRep.save(quest)];
+                                case 3:
+                                    resQuestSave = _a.sent();
+                                    return [4 /*yield*/, stageRep.delete({ quest: quest })];
+                                case 4:
+                                    deleteQuests = _a.sent();
+                                    return [4 /*yield*/, stages.forEach(function (s) {
+                                            return __awaiter(this, void 0, void 0, function () {
+                                                var stage, stageTest_2, stageAction;
+                                                return __generator(this, function (_a) {
+                                                    switch (_a.label) {
+                                                        case 0:
+                                                            stage = new Stage_1.Stage();
+                                                            stage.name = s.name;
+                                                            stage.number = s.number;
+                                                            stage.quest = quest;
+                                                            stage.type = s.type;
+                                                            return [4 /*yield*/, stageRep.save(stage)];
+                                                        case 1:
+                                                            _a.sent();
+                                                            if (!(stage.type === "Тест")) return [3 /*break*/, 4];
+                                                            stageTest_2 = new Stage_Test_1.Stage_Test();
+                                                            stageTest_2.stage = stage;
+                                                            stageTest_2.title = s.test.title;
+                                                            return [4 /*yield*/, stageTestRep.save(stageTest_2)];
+                                                        case 2:
+                                                            _a.sent();
+                                                            return [4 /*yield*/, s.test.questions.forEach(function (q) { return saveQuestion(q, stageTest_2); })];
+                                                        case 3:
+                                                            _a.sent();
+                                                            return [3 /*break*/, 9];
+                                                        case 4:
+                                                            stageAction = new Stage_Action_1.Stage_Action();
+                                                            if (!(stage.type === "QR")) return [3 /*break*/, 6];
+                                                            stageAction.to = s.to;
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction)];
+                                                        case 5:
+                                                            _a.sent();
+                                                            return [3 /*break*/, 7];
+                                                        case 6:
+                                                            if (stage.type === "Видео") {
+                                                                stageAction.url = s.url;
+                                                            }
+                                                            else if (stage.type === "Карта") {
+                                                                stageAction.lat = s.lat;
+                                                                stageAction.long = s.long;
+                                                            }
+                                                            else {
+                                                                stageAction.text = s.text;
+                                                            }
+                                                            _a.label = 7;
+                                                        case 7:
+                                                            stageAction.stage = stage;
+                                                            return [4 /*yield*/, stageActionRep.save(stageAction)];
+                                                        case 8:
+                                                            _a.sent();
+                                                            _a.label = 9;
+                                                        case 9: return [2 /*return*/];
+                                                    }
+                                                });
+                                            });
+                                        })];
+                                case 5:
                                     _a.sent();
                                     return [2 /*return*/, resQuestSave];
                             }

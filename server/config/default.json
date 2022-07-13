@@ -2,5 +2,6 @@
     "port": 8000,
     "secret": "timovey ehe best",
     "durationSecret": "1d",
-    "protocol": "http"
+    "protocol": "http",
+    "url": "localhost:8000"    
 }

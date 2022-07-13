@@ -98,17 +98,8 @@ export class QuestService {
                 else {
                     const stageAction = new Stage_Action()
                     if(stage.type === "QR") {
-                        let word = (<StageActionQrDto>(s as unknown)).to
-
-                        await QRCode.toDataURL(word, (err, src) => {
-                            if (err) {
-                                console.log(err); 
-                                throw new UnexpectedDBError();
-                            }
-                            stageAction.to = src                     
-                        });
-                        await stageActionRep.save(stageAction)
-                        
+                        stageAction.to = (<StageActionQrDto>(s as unknown)).to
+                        await stageActionRep.save(stageAction)                      
                     }
                     else if(stage.type === "Видео") {
                         stageAction.url = (<StageActionMediaDto>(s as unknown)).url
@@ -130,6 +121,67 @@ export class QuestService {
         });
     }
    
+    public static async edit(id: number, title: string, description: string, stages: StageDto[], username: string): Promise<Quest> {
+        const questRep = AppDataSource.getRepository(Quest);
+        const stageRep = AppDataSource.getRepository(Stage);
+        const userRep = AppDataSource.getRepository(User);
+        const stageTestRep = AppDataSource.getRepository(Stage_Test);
+        const stageActionRep = AppDataSource.getRepository(Stage_Action);
+        // const questionRep = AppDataSource.getRepository(Question);
+        // const answerRep = AppDataSource.getRepository(Answer);
+        // const rightAnswerRep = AppDataSource.getRepository(RightAnswer);
+        return catchOrmErrors(async () => {
+            const quest = await questRep.findOneBy({id})
+            quest.title = title;
+            quest.description = description;
+            const author = await userRep.findOneBy({username}); 
+            quest.author = author
+            const resQuestSave = await questRep.save(quest)
+
+            const deleteQuests = await stageRep.delete({quest})
+
+            await stages.forEach(async function(s) {
+                let stage = new Stage()
+                stage.name = s.name
+                stage.number = s.number
+                stage.quest = quest
+                stage.type = s.type
+                await stageRep.save(stage)
+                
+                if(stage.type === "Тест") {
+                    // console.log(s);
+                    const stageTest = new Stage_Test()
+                    stageTest.stage = stage
+                    stageTest.title = s.test.title
+                    await stageTestRep.save(stageTest)
+                    await s.test.questions.forEach(q => saveQuestion(q, stageTest));
+
+                }
+                else {
+                    const stageAction = new Stage_Action()
+                    if(stage.type === "QR") {
+                        stageAction.to = (<StageActionQrDto>(s as unknown)).to
+                        await stageActionRep.save(stageAction)                      
+                    }
+                    else if(stage.type === "Видео") {
+                        stageAction.url = (<StageActionMediaDto>(s as unknown)).url
+                    }
+                    else if(stage.type === "Карта") {
+                        stageAction.lat = (<StageActionMapDto>(s as unknown)).lat
+                        stageAction.long = (<StageActionMapDto>(s as unknown)).long
+                    }
+                    else {
+                        stageAction.text = (<StageActionTextDto>(s as unknown)).text
+                    }
+                    stageAction.stage = stage
+                    await stageActionRep.save(stageAction)
+                    
+                }
+
+            })            
+             return resQuestSave;
+        });
+    }
 
     public static async process(userId: number, questId: number, progress?: number): Promise<Quest_User> {
         const questRep = AppDataSource.getRepository(Quest);

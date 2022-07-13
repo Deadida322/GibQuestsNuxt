@@ -27,11 +27,11 @@ var Quest_User = /** @class */ (function () {
         __metadata("design:type", Number)
     ], Quest_User.prototype, "progress", void 0);
     __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return User_1.User; }, function (user) { return user.quest_user; }),
+        (0, typeorm_1.ManyToOne)(function () { return User_1.User; }, function (user) { return user.quest_user; }, { onDelete: "CASCADE" }),
         __metadata("design:type", User_1.User)
     ], Quest_User.prototype, "user", void 0);
     __decorate([
-        (0, typeorm_1.ManyToOne)(function () { return Quest_1.Quest; }, function (quest) { return quest.quest_user; }),
+        (0, typeorm_1.ManyToOne)(function () { return Quest_1.Quest; }, function (quest) { return quest.quest_user; }, { onDelete: "CASCADE" }),
         __metadata("design:type", Quest_1.Quest)
     ], Quest_User.prototype, "quest", void 0);
     Quest_User = __decorate([

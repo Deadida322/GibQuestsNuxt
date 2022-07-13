@@ -24,6 +24,12 @@ const AppRoutes: Route[] = [
     method: "post",
     action: quest.create
   },
+  {
+    path: "/edit",
+    method: "post",
+    action: quest.editQuest
+  },
+  
 
   {
       path: "/register",

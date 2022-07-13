@@ -7,7 +7,6 @@ import { QuestDto,ProcessQustDto } from './dto';
 import { QuestService } from "../service/quest";
 import * as fs from 'fs';
 import * as path from 'path';
-import {getBaseUrl} from 'get-base-url';
 import * as crypto from 'crypto';
 import * as config from 'config';
 interface MulterRequest extends Request {
@@ -57,11 +56,30 @@ export async function create(request: Request, response: Response) {
     response.json(ok(res));
 }
 
+export async function editQuest(request: Request, response: Response) {
+    const quest = plainToClass(QuestDto, request.body);
+    const errors = await validate(quest, { skipMissingProperties: true });
+    if (errors.length) {
+        throw new ArgumentError();
+    }
+    const res = await QuestService.edit(quest.id, quest.title, quest.description, quest.stages, quest.author.username)
+    response.json(ok(res));
+}
+
 export async function deleteQuest(request: Request, response: Response) {
     if(!request.query.id) {
         response.json(error('Введите query параметр id квеста'))
     }
     try {   
+        const oldQuest = await QuestService.getQuest(+request.query.id)
+        if(oldQuest.image) {
+            const parsePath = oldQuest.image.split('/')
+            const oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1])
+        
+            if(fs.existsSync(oldPath)) {
+                fs.unlinkSync(oldPath)
+            }
+        } 
         const res = await QuestService.deleteQuest(+request.query.id)
         response.json(ok(res));
     }
@@ -135,10 +153,10 @@ export async function updateImage(request: Request, response: Response) {
             const oldPath = path.join(__dirname, '../images', parsePath[parsePath.length - 1])
         
             if(fs.existsSync(oldPath)) {
-            fs.unlinkSync(oldPath)
+                fs.unlinkSync(oldPath)
             }
         } 
-        let pathToClient = `${config.get('protocol')}://${getBaseUrl()}:${config.get('port')}/img/${hash}.png`    
+        let pathToClient = `${config.get('protocol')}://${config.get('url')}/img/${hash}.png`    
         const res = await QuestService.updateImagePath(+request.query.id, pathToClient)
         response.json(ok(res));
     }
